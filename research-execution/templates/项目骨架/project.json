@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "name": null,
+  "created_at": null,
+  "phase": "G0",
+  "scope": "PREPARATION",
+  "protocol_manifest": null,
+  "submission_receipt": null,
+  "budgets": [],
+  "snapshot_required_tasks": {
+    "protocol": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4"
+    ],
+    "release": [
+      "G0",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6",
+      "G7"
+    ]
+  },
+  "decisions": []
+}

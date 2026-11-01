@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "G0",
+      "title": "研究问题与可行性",
+      "stage": "G0",
+      "status": "TODO",
+      "depends_on": [],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G1",
+      "title": "数据准入与划分",
+      "stage": "G1",
+      "status": "TODO",
+      "depends_on": [
+        "G0"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G2",
+      "title": "原理、实现与评分",
+      "stage": "G2",
+      "status": "TODO",
+      "depends_on": [
+        "G1"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G3",
+      "title": "强基线复现",
+      "stage": "G3",
+      "status": "TODO",
+      "depends_on": [
+        "G2"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G4",
+      "title": "开发小试与规模估计",
+      "stage": "G4",
+      "status": "TODO",
+      "depends_on": [
+        "G3"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G5",
+      "title": "正式协议冻结",
+      "stage": "G5",
+      "status": "TODO",
+      "depends_on": [
+        "G4"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G6",
+      "title": "正式运行与失败记录",
+      "stage": "G6",
+      "status": "TODO",
+      "depends_on": [
+        "G5"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G7",
+      "title": "分析、主张与论文",
+      "stage": "G7",
+      "status": "TODO",
+      "depends_on": [
+        "G6"
+      ],
+      "owner": null,
+      "review_required": true,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G8",
+      "title": "投稿材料与修回",
+      "stage": "G8",
+      "status": "TODO",
+      "depends_on": [
+        "G7"
+      ],
+      "owner": null,
+      "review_required": false,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    },
+    {
+      "id": "G9",
+      "title": "归档与复用",
+      "stage": "G9",
+      "status": "TODO",
+      "depends_on": [
+        "G8"
+      ],
+      "owner": null,
+      "review_required": false,
+      "inputs": [],
+      "acceptance_criteria": [],
+      "outputs": [],
+      "review": null,
+      "self_check": null,
+      "blocked_reason": null,
+      "defer_reason": null,
+      "history": []
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "venue": null,
+  "requirements_source": {
+    "path": null,
+    "sha256": null,
+    "version": null
+  },
+  "manuscript": {
+    "authoritative_source": null,
+    "required_editable_format": null,
+    "final_pdf_export_from": null,
+    "language": null,
+    "word_count_range": null,
+    "word_count_scope": null,
+    "anonymous_review": null,
+    "abstract_word_count_range": null,
+    "keywords_requirements": null,
+    "bilingual_consistency_requirements": null
+  },
+  "layout": {
+    "paper_size": null,
+    "margins_mm": null,
+    "columns": null,
+    "body_font_zh": null,
+    "body_font_latin": null,
+    "body_size_pt": null,
+    "line_spacing": null,
+    "first_page_note": null,
+    "odd_header": null,
+    "even_header": null,
+    "odd_footer": null,
+    "even_footer": null,
+    "cjk_latin_spacing": null,
+    "paragraph_first_line_indent_chars": null,
+    "paragraph_spacing": null
+  },
+  "figures": {
+    "allowed_formats": null,
+    "font_zh": null,
+    "font_latin": null,
+    "font_size_pt": null,
+    "min_effective_dpi": null,
+    "label_preferences": null,
+    "caption_requirements": null,
+    "prohibited_label_characters": null
+  },
+  "tables": {
+    "style": null,
+    "font_size_pt": null,
+    "alignment": null,
+    "caption_requirements": null,
+    "number_format": null
+  },
+  "equations": {
+    "editable": true,
+    "numbering": null
+  },
+  "references": {
+    "style": null,
+    "in_text_position": null,
+    "punctuation_relation": null,
+    "bibliography_indent": null,
+    "bibliography_alignment": null,
+    "line_spacing": null
+  },
+  "authors": {
+    "verified": false,
+    "placeholder_status": "UNFILLED"
+  },
+  "requirements_trace": [],
+  "unresolved": [],
+  "writing_contract": {
+    "reader_domain": null,
+    "narrative_viewpoint": null,
+    "section_roles": [],
+    "discussion_and_conclusion_combined": null,
+    "critical_content_in_main_text": null,
+    "final_abstract_after_body": null
+  }
+}
