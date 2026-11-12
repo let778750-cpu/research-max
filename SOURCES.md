@@ -68,7 +68,11 @@
 
 **W9 量化参考带与 F7**：来自《SCI论文方法论手册》部分章节（按适用范围移植，板块化润色与五遍编辑法未采纳，避免与 W3—W8 分工重复）、de-ai-taste 中文信号库三类信号（结构节奏、标点排版、内容姿态）、Gopen & Swan 一句（旧信息在前、重点居尾），以及两篇交流报告重写的实测标定。**标定样本仅两篇，全部阈值为初版，随使用修正**；机械判定并入 writing_lint（rhythm/parity/layout）。
 
-**F8—F14 科研绘图生产（2026-11-12）**：源自 [nature-skills](https://github.com/Yuan1z0825/nature-skills) 的 nature-figure 技能 v2.8.0（Apache-2.0；本地只读摘编改写为中文规则条文，非逐字复制，未运行其脚本）——图形契约要素（references/figure-contract.md）、四原型（static/core/stance.md、references/chart-types.md）、语义色族与无障碍判据（references/design-theory.md）、刊印尺寸与渲染后检查项（references/qa-contract.md）、多面板证据架构（references/multipanel-evidence-architecture.md）、图注统计最小项。mplstyle 示例的键项另参考 [SciencePlots](https://github.com/garrettj403/SciencePlots)（仅样式条目类别，未采纳其具体取值）。边界与反例：Nature 单双栏毫米、字号 pt、面板标号规格与色板 hex 均为期刊语境值，不作通用规则，具体值由项目配置域（字体版式、图件载体）决定、未知填 null；不引入其 AI 生图联网路线（生成式图像诚信沿用本库 F2/F3）、后端排他约束与 Python QA 脚本分发；随附 figure_style.template.mplstyle 为全注释示例。
+**F8—F14 科研绘图生产（2026-11-12）**：源自 [nature-skills](https://github.com/Yuan1z0825/nature-skills) 的 nature-figure 技能 v2.8.0（Apache-2.0；本地只读摘编改写为中文规则条文，非逐字复制，未运行其脚本）——图形契约要素（references/figure-contract.md）、四原型（static/core/stance.md、references/chart-types.md）、语义色族与无障碍判据（references/design-theory.md）、刊印尺寸与渲染后检查项（references/qa-contract.md）、多面板证据架构（references/multipanel-evidence-architecture.md）、图注统计最小项。mplstyle 示例的键项另参考 [SciencePlots](https://github.com/garrettj403/SciencePlots)（仅样式条目类别，未采纳其具体取值）。边界与反例：Nature 单双栏毫米、字号 pt、面板标号规格与色板 hex 均为期刊语境值，不作通用规则，具体值由项目配置域（字体版式、图件载体）决定、未知填 null；不引入其 AI 生图联网路线（生成式图像诚信沿用本库 F2/F3）、后端排他约束与 Python QA 脚本分发；随附 figure_style.template.mplstyle 为全注释示例。图中文字字形缺失告警经验来自 2026-11-12 实测（默认字体无中文字形，登记含所需字形字体后消除）。
+
+**审稿意见路线图与回复信（2026-11-12）**：源自 [academic-research-skills](https://github.com/Imbad0202/academic-research-skills) 的 revision-coach 思想（审稿意见解析为不可变 Roadmap＋作者逐条裁决）、revision_response_template（回应—行动—变化三段结构）、rebuttal-audit（只审覆盖度不代写、不代审对错）。采纳：条目不可改写、判断变化追加不抹除、每条裁决给依据、覆盖度逐条核对。边界与反例：不引入其多代理分工与裁定权；修订状态与版本账目仍由 research-execution 技能交接与修回模板唯一维护，不建第二套状态账；回复不虚构审稿人让步、不把部分回应写成完全解决。
+
+**统计报告完整性清单（2026-11-12）**：源自 academic-research-skills 的 statistical_reporting_standards.md（academic-paper-reviewer/references）——通用报告清单与分方法最小报告项。改写：APA 具体格式（小数位、符号样式）通用化为"报告什么"判据，格式随目标刊；补机器学习语境（划分、种子或折、曝光登记），与数据准入及 paper-writing 技能 F14 图注最小项同源不同粒度。边界与反例：清单管报告完整性不管结论解读（解读仍归统计推断与外推节）；缺项要么补齐要么写明不适用，不逐项打勾代替核对。
 
 ## report-writing：非论文报告
 
