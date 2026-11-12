@@ -1,0 +1,37 @@
+# 科研绘图样式示例（matplotlib）
+# 示例：全部条目默认注释，不构成通用规则；项目按目标刊与项目配置域（字体版式、图件载体）替换取值后取消注释。
+# 用法：复制为本项目样式文件，填入项目值；样式文件本地离线加载，不联网。检查以导出件为准（F11、F14）。
+
+# 图幅与导出
+# figure.figsize : 3.3, 2.5     # 示例：图幅（英寸），按目标刊单双栏毫米换算
+# figure.dpi : 150              # 示例：预览分辨率；导出分辨率按 F3 有效分辨率核算
+# savefig.bbox : tight          # 示例：导出裁切
+# savefig.pad_inches : 0.05     # 示例：裁切留白
+
+# 字体与字号（在最终刊印尺寸下检查，导出件实测为准）
+# font.family : sans-serif      # 示例：字体族，按目标刊要求登记项目值
+# font.sans-serif : Microsoft YaHei, SimHei, DejaVu Sans, sans-serif  # 示例：图中含中文时须登记含所需字形的字体，渲染告警不得忽略
+# font.size :                   # 项目值：基础字号（pt），启用前填入
+# axes.labelsize :              # 项目值：坐标标签字号
+# xtick.labelsize :             # 项目值：x 刻度字号
+# ytick.labelsize :             # 项目值：y 刻度字号
+# legend.fontsize :             # 项目值：图例字号
+# mathtext.fontset : dejavusans # 示例：数学字体与正文字体族保持一致；上下标渲染缩小须实测
+
+# 线宽与标记（分层：轴、数据线、参考线）
+# axes.linewidth :              # 项目值：轴线宽
+# lines.linewidth :             # 项目值：数据线宽
+# lines.markersize :            # 项目值：标记大小
+
+# 轴与脊
+# axes.spines.top : False       # 示例：去上脊，按领域惯例与目标刊调整
+# axes.spines.right : False     # 示例：去右脊
+# xtick.direction : in          # 示例：刻度朝向
+# ytick.direction : in          # 示例：刻度朝向
+
+# 图例
+# legend.frameon : False        # 示例：无框图例
+
+# 导出可编辑性（F13）
+# svg.fonttype : none           # 示例：SVG 保留可编辑文本
+# pdf.fonttype : 42             # 示例：PDF 嵌入字体不转曲，按投稿要求登记
