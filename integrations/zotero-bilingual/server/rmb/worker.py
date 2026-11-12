@@ -18,9 +18,10 @@ def main():
     config=json.loads((job/'config.json').read_text(encoding='utf-8'));state=json.loads((job/'job.json').read_text(encoding='utf-8'))
     def progress(message,value=5,stage='recognizing'):
         atomic_json(job/'progress.json',{'message':message,'progress':value,'stage':stage})
-    from .paddle_cloud import PaddleCloud,Cancelled
+    from .paddle_cloud import PaddleCloud
+    from .babeldoc_flow import Cancelled as EngineCancelled
     def check():
-        if (job/'cancel.request').exists():raise Cancelled()
+        if (job/'cancel.request').exists():raise EngineCancelled()
     try:
         import pymupdf as fitz
         source=job/'source.pdf'
@@ -28,13 +29,18 @@ def main():
             if predominantly_chinese(''.join(doc[n].get_text() for n in range(min(5,len(doc))))):
                 atomic_json(job/'report.json',{'status':'skipped','message':'检测为中文论文，已跳过','sourceHash':state['sourceHash'],'issues':[],'pages':len(doc)})
                 return
+        store=ConfigStore(args.data_dir)
+        if config.get('pipeline')=='babeldoc-engine-v1':
+            from .babeldoc_flow import run_pipeline as run_engine
+            logging.disable(logging.CRITICAL)
+            run_engine(source,job,args.data_dir,state,config,store,progress,check)
+            return
         from .translator import GuardedTranslator
         from .cloud_pipeline import run_pipeline
         logging.disable(logging.CRITICAL)
         memory_scope={'sourceHash':state['sourceHash'],'translationFingerprint':translation_fingerprint(config)}
         memory_path=args.data_dir/'cache'/'text'/state['sourceHash']/(memory_scope['translationFingerprint']+'.json')
         checkpoint=DurableCheckpoint(job/'translation-checkpoint.json',scope_of(state),memory_path,memory_scope)
-        store=ConfigStore(args.data_dir)
         translator=GuardedTranslator(config,store.secret(),checkpoint,check=check)
         cloud=PaddleCloud(store.ocr_secret(),args.data_dir/'cache'/'ocr',cancelled=lambda:(job/'cancel.request').exists(),progress=progress)
         reports=[]

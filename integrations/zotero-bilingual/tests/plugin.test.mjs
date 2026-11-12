@@ -116,10 +116,10 @@ test('old runtime is rejected before spawning; a new endpoint must advertise res
     if(!started)throw new Error('not started');return {url:'http://127.0.0.1:1234',token:'test-token',pid:17};
   }};
   globalThis.Components={interfaces:{},classes:{'@mozilla.org/process/util;1':{createInstance:()=>({pid:17,isRunning:true,init(){},runwAsync(){started=true}})}}};
-  globalThis.Zotero={Prefs:{get:()=>''},File:{pathToFile:value=>value},Promise:{delay:async()=>{}},HTTP:{request:async()=>{healthCalls++;return {response:{version:'0.3.6',capabilities}}}}};
+  globalThis.Zotero={Prefs:{get:()=>''},File:{pathToFile:value=>value},Promise:{delay:async()=>{}},HTTP:{request:async()=>{healthCalls++;return {response:{version:'0.4.0',capabilities}}}}};
   const service=await import(dataURL+'#runtime-check');
   await assert.rejects(service.ensureService(),/版本不匹配/);assert.equal(started,false);
-  activeVersion='0.3.6';await assert.rejects(service.ensureService(),/版本不匹配/);assert.equal(healthCalls,1);
+  activeVersion='0.4.0';await assert.rejects(service.ensureService(),/版本不匹配/);assert.equal(healthCalls,1);
   capabilities=['resume-checkpoint-v1'];const endpoint=await service.ensureService();assert.equal(endpoint.pid,17);
 });
 

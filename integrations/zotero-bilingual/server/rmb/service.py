@@ -116,20 +116,21 @@ class JobService:
         fingerprint = config_fingerprint(config)
         if not isinstance(improve,bool) or not isinstance(automatic,bool):raise ValueError('Invalid improve option')
         if automatic:improve=True;base_output_hash=None
-        base=self.best_archive(source_hash,config,pages,legacy=improve,output_hash=base_output_hash if improve else None)
-        if improve and base_output_hash and base is None:raise ValueError('原存档与当前翻译设置不匹配，请使用普通翻译生成新版本')
         import hashlib
         cache_key = hashlib.sha256((source_hash + fingerprint + json.dumps(pages)).encode()).hexdigest()
-        audit=None
-        if automatic and base:
-            from .cloud_pipeline import audit_archive
-            audit=audit_archive(source,base[0]/'result.pdf',base[1],pages=pages)
-        audited={base[0].name:audit} if base and audit else {}
-        needs_improve=improve and base and (audit['needsWork'] if automatic and audit else
-                      (base[1].get('configFingerprint')!=fingerprint or base[1].get('schema',1)<2 or
-                       base[1].get('coverage',{}).get('missing',1)>0))
-        if needs_improve:cache_key=hashlib.sha256((cache_key+base[0].name+sha256_file(base[0]/'report.json')).encode()).hexdigest()
-        elif base:cache_key=base[0].name
+        base=None;audit=None;audited={};needs_improve=False
+        if config.get('pipeline')!='babeldoc-engine-v1':
+            base=self.best_archive(source_hash,config,pages,legacy=improve,output_hash=base_output_hash if improve else None)
+            if improve and base_output_hash and base is None:raise ValueError('原存档与当前翻译设置不匹配，请使用普通翻译生成新版本')
+            if automatic and base:
+                from .cloud_pipeline import audit_archive
+                audit=audit_archive(source,base[0]/'result.pdf',base[1],pages=pages)
+            audited={base[0].name:audit} if base and audit else {}
+            needs_improve=improve and base and (audit['needsWork'] if automatic and audit else
+                          (base[1].get('configFingerprint')!=fingerprint or base[1].get('schema',1)<2 or
+                           base[1].get('coverage',{}).get('missing',1)>0))
+            if needs_improve:cache_key=hashlib.sha256((cache_key+base[0].name+sha256_file(base[0]/'report.json')).encode()).hexdigest()
+            elif base:cache_key=base[0].name
         with self.lock:
             if self.closing:
                 raise ValueError("服务正在退出")
@@ -140,7 +141,7 @@ class JobService:
             # A prior attempt may already occupy this derived revision. Audit
             # that exact result too; never return it merely because the base was
             # audited, and never overwrite an incomplete archived revision.
-            if automatic:
+            if automatic and config.get('pipeline')!='babeldoc-engine-v1':
                 from .cloud_pipeline import audit_archive
                 for _ in range(64):
                     candidate=self.data/'cache'/cache_key
@@ -186,7 +187,8 @@ class JobService:
                     self.save_job(state)
                     return state
             self.config.secret()
-            self.config.ocr_secret()  # Offline cache hits above need neither credential.
+            if config.get('pipeline')!='babeldoc-engine-v1':
+                self.config.ocr_secret()  # Offline cache hits above need neither credential.
             shutil.copy2(source, job_dir / "source.pdf")
             atomic_json(job_dir / "config.json", {k: v for k, v in config.items() if k not in ("hasApiKey","hasPaddleApiKey")})
             previous=[]

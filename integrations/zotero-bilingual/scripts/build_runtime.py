@@ -1,5 +1,5 @@
 """Build an isolated, inference-free runtime from an existing Python 3.12."""
-import argparse,shutil,subprocess,json,ast
+import argparse,os,shutil,subprocess,json,ast
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -20,7 +20,9 @@ def main():
             ignore=shutil.ignore_patterns('site-packages','__pycache__','test','tests','idlelib','tkinter','turtledemo'))
     packages=target/'Lib'/'site-packages';packages.mkdir(exist_ok=True)
     requirements=ROOT/'server'/('requirements.in' if args.refresh_lock else 'requirements.lock')
-    subprocess.run([str(args.python_root/'python.exe'),'-I','-m','pip','install','--disable-pip-version-check',
+    # The staged runtime python has no pip; allow a pip-capable installer python.
+    pip_python=Path(os.environ.get('RMB_PIP_PYTHON') or args.python_root/'python.exe')
+    subprocess.run([str(pip_python),'-I','-m','pip','install','--disable-pip-version-check',
         '--only-binary=:all:','--ignore-installed','--target',str(packages),'-r',str(requirements)],check=True)
     query="import importlib.metadata as m;print('\\n'.join(sorted(d.metadata['Name']+'=='+d.version for d in m.distributions())))"
     locked=subprocess.check_output([str(target/'python.exe'),'-I','-c',query],text=True,encoding='utf-8')

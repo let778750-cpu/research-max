@@ -14,8 +14,8 @@ from urllib.parse import urlparse
 DEFAULTS = {
     "provider": "zhipu", "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
     "model": "glm-5.3-flash", "targetLanguage": "zh-CN",
-    "qps": 2, "minFontScale": 0.85, "glossary": "",
-    "ocrProvider": "aistudio", "ocrModel": "PaddleOCR-VL-1.6",
+    "qps": 4, "minFontScale": 0.85, "glossary": "",
+    "pipeline": "babeldoc-engine-v1",
 }
 
 def atomic_json(path: Path, value):
@@ -88,8 +88,8 @@ class ConfigStore:
                 result[key] = value[key]
         result.pop("hasApiKey", None)
         result.pop("hasPaddleApiKey", None)
-        if result['ocrProvider'] != 'aistudio' or result['ocrModel'] != 'PaddleOCR-VL-1.6':
-            raise ValueError('当前版本使用 AI Studio PaddleOCR-VL-1.6')
+        if result.get("pipeline") != "babeldoc-engine-v1":
+            result["pipeline"] = "babeldoc-engine-v1"
         url = urlparse(str(result["baseUrl"]))
         if url.scheme != "https" or not url.hostname or url.username or url.password or url.query:
             raise ValueError("模型接口必须是无凭据和查询参数的 HTTPS 地址")
@@ -121,7 +121,7 @@ class ConfigStore:
 
 def config_fingerprint(config):
     public = {k: config[k] for k in DEFAULTS}
-    public["pipeline"] = "rmb-0.3.6-paddle-cloud-layout6-compose3"
+    public["pipeline"] = "rmb-0.4.0-babeldoc-engine-v1"
     return hashlib.sha256(json.dumps(public, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 def translation_fingerprint(config):

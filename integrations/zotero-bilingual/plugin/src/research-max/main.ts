@@ -142,28 +142,25 @@ async function settings(){
   settingsWindow=openSettingsWindow(Zotero.getMainWindow(),async(win:any)=>{
       const doc=win.document,body=doc.getElementById("body");body.replaceChildren();
       const make=(tag:string,text="")=>{const el=doc.createElementNS(HTML,tag);el.textContent=text;return el;};
-      body.append(make("h2",`中文对照设置 · ${version}`),make("p","选定 PDF 发送至飞桨 AI Studio 识别，待译文本发送至下方模型接口；中文 PDF 在本机排版。两种密钥分别使用当前 Windows 账户加密保存。"));
+      body.append(make("h2",`中文对照设置 · ${version}`),make("p","版面解析、公式保护与中文排版全部在本机引擎完成，不上传论文；仅将待译文本发送至下方模型接口。密钥使用当前 Windows 账户加密保存。"));
       const status=make("p","正在连接本机服务…");status.id="message";body.append(status);
       try{
         let config=await api("/api/config");const inputs:any={};
-        for(const [key,label] of [["paddleApiKey",`AI Studio 访问令牌（PaddleOCR API Key）${config.hasPaddleApiKey?"（已保存，留空保持）":""}`],["provider","翻译服务商"],["baseUrl","翻译标准 API 地址"],["model","翻译模型"],["apiKey",`翻译 API 密钥${config.hasApiKey?"（已保存，留空保持）":""}`],["glossary","术语表（每行：英文 = 中文）"]]){
+        for(const [key,label] of [["provider","翻译服务商"],["baseUrl","翻译标准 API 地址"],["model","翻译模型"],["apiKey",`翻译 API 密钥${config.hasApiKey?"（已保存，留空保持）":""}`],["glossary","术语表（每行：英文 = 中文）"]]){
           const holder=make("label",label);const input=make(key==="glossary"?"textarea":key==="provider"?"select":"input");
           if(key==="provider")for(const value of ["zhipu","deepseek"]){const option=make("option",value==="zhipu"?"智谱标准 API":"DeepSeek");option.value=value;input.append(option);}
-          const secret=key==="apiKey"||key==="paddleApiKey";input.value=secret?"":config[key]||"";if(secret){input.type="password";input.autocomplete="off";}
+          const secret=key==="apiKey";input.value=secret?"":config[key]||"";if(secret){input.type="password";input.autocomplete="off";}
           if(key==="glossary")input.rows=5;inputs[key]=input;holder.append(input);body.append(holder);
         }
         inputs.provider.addEventListener("change",()=>{const deep=inputs.provider.value==="deepseek";inputs.baseUrl.value=deep?"https://api.deepseek.com":"https://open.bigmodel.cn/api/paas/v4";inputs.model.value=deep?"deepseek-chat":"glm-5.3-flash";inputs.apiKey.value="";status.textContent="切换服务商后请填入对应密钥。";});
-        const save=make("button","保存"),test=make("button","检测飞桨连接"),close=make("button","关闭");body.append(save,test,close);
+        const save=make("button","保存"),close=make("button","关闭");body.append(save,close);
         save.addEventListener("click",()=>run(async()=>{const value:any={};for(const key of Object.keys(inputs))value[key]=inputs[key].value;
           if(value.provider!==config.provider&&!value.apiKey)throw new Error("切换服务商时请填写对应 API 密钥");
-          const old=JSON.stringify(config);const updated=await api("/api/config",value);inputs.apiKey.value="";inputs.paddleApiKey.value="";
+          const old=JSON.stringify(config);const updated=await api("/api/config",value);inputs.apiKey.value="";
           if(old!==JSON.stringify(updated))Zotero.Prefs.set("extensions.zotero.research-max-bilingual.configEpoch",Date.now(),true);
           config=updated;
-          status.textContent="已保存。可检测飞桨连接，或关闭设置后点击 PDF 工具栏的翻译。";}));
-        test.addEventListener("click",async()=>{test.disabled=true;try{if(inputs.paddleApiKey.value){await api('/api/config',{paddleApiKey:inputs.paddleApiKey.value});inputs.paddleApiKey.value='';}
-          status.textContent='正在检测身份验证，不上传论文…';const result=await api('/api/config/test-paddle',{});status.textContent=result.message;
-          }catch(e:any){status.textContent=e.message;}finally{test.disabled=false;}});
-        close.addEventListener("click",()=>win.close());status.textContent="本机服务已连接；识别模型：PaddleOCR-VL-1.6";
+          status.textContent="已保存。关闭设置后，在 PDF 工具栏点击翻译即可。";}));
+        close.addEventListener("click",()=>win.close());status.textContent="本机服务已连接；本地引擎：BabelDOC 0.7.1";
       }catch(e:any){status.textContent=e.message;}
     },e=>Zotero.logError(e));
   return settingsWindow;

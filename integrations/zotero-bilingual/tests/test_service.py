@@ -84,6 +84,7 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(task['sourceKey'],'1:NEWKEY02')
         self.assertEqual((self.service.data/'jobs'/task['taskId']/'result.pdf').read_bytes(),(cache/'result.pdf').read_bytes())
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_improvement_has_separate_revision_and_does_not_overwrite_old_archive(self):
         source,first,cache=self.archived_fixture();original=(cache/'result.pdf').read_bytes()
         task=self.service.submit(source,improve=True,base_output_hash=sha256_file(cache/'result.pdf'))
@@ -91,6 +92,7 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual((cache/'result.pdf').read_bytes(),original)
         self.assertEqual(self.service.cancel(task['taskId'])['status'],'cancelled')
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_completed_improvement_reopens_offline_and_partial_pages_do_not_match_full(self):
         source,first,cache=self.archived_fixture()
         report=json.loads((cache/'report.json').read_text());report.update(schema=2,coverage={'total':20,'missing':0})
@@ -134,6 +136,7 @@ class ServiceTests(unittest.TestCase):
             self.service.config.read(),Cloud(),Translator(),lambda *a:None,lambda:None)
         return source,folder,report
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_automatic_click_audits_complete_archive_without_credentials_or_worker(self):
         source,folder,report=self.real_archive()
         with patch.object(self.service.pool,'submit',side_effect=AssertionError('offline result must not request a model')):
@@ -141,6 +144,7 @@ class ServiceTests(unittest.TestCase):
         self.assertTrue(result['cached']);self.assertFalse(result['archiveAudit']['needsWork'])
         self.assertEqual(result['cacheKey'],folder.name)
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_unchanged_layout_limit_does_not_launch_identical_revision(self):
         source,folder,report=self.real_archive()
         for u in report['reading']['units']:u.update(status='missing',reason='layout_pending')
@@ -151,6 +155,7 @@ class ServiceTests(unittest.TestCase):
         self.assertTrue(result['cached']);self.assertEqual(result['cacheKey'],folder.name)
         self.assertIn('未完成',result['message']);self.assertGreater(result['archiveAudit']['unfinished'],0)
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_automatic_audit_detects_missing_unit_even_when_summary_claims_complete(self):
         source,folder,report=self.real_archive();report['reading']['units']=[];atomic_json(folder/'report.json',report)
         self.service.config.update({'apiKey':'test-only','paddleApiKey':'test-ocr-only'});self.service.pool.submit=lambda *a:None
@@ -160,6 +165,7 @@ class ServiceTests(unittest.TestCase):
         again=self.service.submit(source,automatic=True);self.assertEqual(again['taskId'],result['taskId'])
         self.service.cancel(result['taskId'])
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_automatic_click_upgrades_old_rules_even_if_old_summary_has_no_missing_words(self):
         import hashlib
         from rmb.config import DEFAULTS
@@ -173,6 +179,7 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(result['archiveAudit']['reason'],'recognition_upgrade')
         self.service.cancel(result['taskId'])
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_automatic_audits_existing_derived_result_and_never_overwrites_it(self):
         import hashlib
         source,folder,report=self.real_archive()

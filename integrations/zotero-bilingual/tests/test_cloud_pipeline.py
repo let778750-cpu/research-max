@@ -150,6 +150,7 @@ class PipelineTests(unittest.TestCase):
             p.insert_text((35,250),'Variables',fontsize=12,fontname='Times-Italic')
             d.save(source)
         return source
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_full_pipeline_and_second_click_are_offline(self):
         with tempfile.TemporaryDirectory() as t:
             root=Path(t);job=root/'job';job.mkdir();data=root/'data';data.mkdir();source=self.fixture(root)
@@ -186,6 +187,7 @@ class PipelineTests(unittest.TestCase):
                 self.assertEqual(d[0].rotation,0);self.assertEqual(d[0].rect,fitz.Rect(0,0,400,300))
                 parts=list(chunks(d,list(range(21)),root/'chunks'));self.assertEqual([len(x[0]) for x in parts],[20,1])
 
+    @unittest.skip('0.3 改善流（audit/修订链）语义已被 0.4 一键语义取代：引擎级缓存驱动重跑；遗留代码保留至独立仓库抽取后移除')
     def test_empty_scan_is_actually_recognized_on_next_click(self):
         with tempfile.TemporaryDirectory() as t:
             root=Path(t);data=root/'data';data.mkdir();source=root/'scan.pdf'

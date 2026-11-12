@@ -1,5 +1,5 @@
 const PREF = "extensions.zotero.research-max-bilingual.";
-const REQUIRED_RUNTIME="0.3.6";
+const REQUIRED_RUNTIME="0.4.0";
 function runtimeMismatch(){const error=new Error(`本机翻译服务版本不匹配。请先安装 ${REQUIRED_RUNTIME} 配套运行服务，再重启 Zotero。`);error.name='RMBRuntimeMismatch';return error;}
 async function checkedEndpoint(value:any){
   const response=await Zotero.HTTP.request('GET',value.url+'/health',{headers:{'X-RMB-Token':value.token},responseType:'json',timeout:1500});
