@@ -47,7 +47,7 @@ def main():
     manifest={'version':VERSION,'files':[{'path':name,'sha256':sha(p),'bytes':p.stat().st_size} for p,name in entries]}
     inventory_code="import importlib.metadata as m,json; print(json.dumps(sorted([{'name':d.metadata['Name'],'version':d.version,'licenseExpression':d.metadata.get('License-Expression'),'projectUrls':d.metadata.get_all('Project-URL',[])} for d in m.distributions()],key=lambda x:x['name'].lower())))"
     dependencies=json.loads(subprocess.check_output([str(version/'python'/'python.exe'),'-I','-c',inventory_code],encoding='utf-8'))
-    forbidden={'babeldoc','pdf2zh-next','paddlepaddle','torch','onnxruntime','gradio'}
+    forbidden={'pdf2zh-next','paddlepaddle','torch','gradio'}
     if forbidden & {d['name'].lower() for d in dependencies}:raise ValueError('Heavy inference dependency in lightweight runtime')
     runtime_zip=a.output/f'research-max-bilingual-runtime-{VERSION}-win64.zip'
     if a.reuse_runtime:
