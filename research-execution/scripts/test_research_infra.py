@@ -12,7 +12,7 @@ class InfrastructureTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="research-infra-test-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name) / "project"
-        infra.initialize(self.root, "SOFTWARE_TEST_ONLY")
+        infra.initialize(self.root, "SOFTWARE_TEST_ONLY", task_format="json")
 
     def load(self, name):
         return infra.read_json(self.root / name)
@@ -51,6 +51,32 @@ class InfrastructureTests(unittest.TestCase):
         self.assertTrue(report["ok"])
         self.assertEqual(report["counts"], {"TODO": 10})
         self.assertEqual(report["ready_tasks"], ["G0"])
+
+    def test_review_requires_outputs_and_real_self_check(self):
+        board = self.load("tasks.json")
+        board["tasks"][0].update(status="REVIEW", owner="fixture-author", acceptance_criteria=["核对示例"])
+        self.save("tasks.json", board)
+        self.assertFalse(infra.check(self.root)["ok"])
+        self.accept()
+        board = self.load("tasks.json")
+        board["tasks"][0].update(status="REVIEW", review=None, self_check="实际检查示例边界")
+        self.save("tasks.json", board)
+        self.assertTrue(infra.check(self.root)["ok"])
+
+    def test_placeholders_cannot_be_owner_criteria_or_self_check(self):
+        for field, value in (("owner", "待核实"), ("acceptance_criteria", ["待核实"]), ("self_check", "待核实")):
+            self.accept()
+            board = self.load("tasks.json")
+            board["tasks"][0].update(review_required=False, review=None, self_check="实际示例检查")
+            board["tasks"][0][field] = value
+            self.save("tasks.json", board)
+            self.assertFalse(infra.check(self.root)["ok"], field)
+
+    def test_review_checks_require_nonempty_real_text(self):
+        for checks in ([None], [""], ["待核实"], [{}]):
+            self.accept()
+            self.change_review(checks=checks)
+            self.assertFalse(infra.check(self.root)["ok"])
 
     def test_initialization_never_overwrites(self):
         original = infra.digest(self.root / "tasks.json")
