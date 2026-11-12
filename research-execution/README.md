@@ -1,10 +1,10 @@
 # research-execution：研究执行技能
 
-面向领域科研人员及其 AI 助手，覆盖从研究方案到可复现证据的执行域：G0—G9 阶段关卡、数据准入与知识隔离、任务推进与证据反馈、人机协作与接续、实验层次与协议冻结、统计分析与结果诊断、归档复用，附空白模板、项目骨架与本地检查工具。
+面向领域科研人员及其 AI 助手，覆盖从研究方案到可复现证据的执行域：G0—G9 阶段关卡、数据准入与知识隔离、Markdown 计划拆分、模块状态与证据反馈、人机协作与接续、实验层次与协议冻结、统计分析与结果诊断、归档复用，附空白模板、项目骨架与本地检查工具。
 
 ## 适用范围
 
-- 计算、仿真与实验型研究的过程管理：接手项目、启动新项目、数据准入、任务与验收、探索与变更控制、实验运行与冻结、结果诊断、归档
+- 计算、仿真、实验、观察与理论研究的过程管理：接手项目、启动新项目、数据准入、任务与验收、探索与变更控制、按研究类型验证、结果诊断、归档
 - 不适用：选题调研与论文精读（research-topic）、论文写作与投稿修回（paper-writing）、非论文报告（report-writing）
 
 ## 目录结构
@@ -15,18 +15,22 @@ research-execution/
 ├── references/
 │   ├── 流程与关卡.md                  # G0—G9 阶段表、三个循环、最小运行方式
 │   ├── 数据准入与知识隔离.md          # 七项准入、先分组再划分、受控生成、知识隔离
-│   ├── 方案落地与任务关卡.md          # 方案变合同、单一状态源、验收强度
+│   ├── 方案落地与任务关卡.md          # 计划拆分、Markdown 权威任务卡、验收强度
 │   ├── 证据反馈与变更控制.md          # 探索短循环、调整三层级五决定、变更分流
+│   ├── Markdown任务格式.md           # 可选工具的少量字段与证据格式
 │   ├── 协作与接续.md                 # 判断分工、四类追问、并行、接续交代
 │   ├── 实验运行与复现.md             # 原理可检验、强基线、三层次、小试、冻结、恢复
 │   ├── 统计评价与结果诊断.md          # 分母先行、同分定位、推断外推、领域解释
 │   └── 归档与复用.md                 # 归档清单、跨环境复现、经验复用
 ├── templates/                        # 数据与划分卡、任务与验收、实验协议与冻结单、
 │   │                                 # 主张与证据表、交接与修回、项目骨架/
-│   └── 项目骨架/                     # README、project.json、tasks.json、submission_profile.json
+│   └── 项目骨架/                     # PLAN.md、TASKS.md、README 与项目配置；兼容 JSON 单列于 templates/兼容/
 └── scripts/
-    ├── research_infra.py             # init/check/snapshot/verify 本地检查（仅标准库）
-    └── test_research_infra.py        # 单元测试
+    ├── research_infra.py             # init/check/board/hash/basis/snapshot/verify 本地检查（仅标准库）
+    ├── markdown_tasks.py            # Markdown 只读解析，不另存任务账
+    ├── test_research_infra.py        # JSON 兼容及共用检查测试
+    ├── test_markdown_tasks.py        # Markdown 解析、汇总、快照正反例
+    └── test_plan_changes.py          # 计划同步、局部要求绑定、任务承接与兼容
 ```
 
 ## 使用方式
@@ -38,6 +42,8 @@ research-execution/
 ```powershell
 python .\scripts\research_infra.py init --dest '<空目录>' --name '<研究名称>'
 ```
+
+**人和模型共用**：总体计划用[PLAN模板](templates/项目骨架/PLAN.md)，模块状态直接在 TASKS.md 维护，长说明或复核按需链接。默认两份 Markdown，短计划可合并。可选工具读取格式见[Markdown任务格式](references/Markdown任务格式.md)。
 
 **人工使用**：直接阅读 references/；任务记录用 `templates/任务与验收.md`，实验协议用 `templates/实验协议与冻结单.md`。
 

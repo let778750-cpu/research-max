@@ -2,10 +2,12 @@
 
 四个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库为**规则唯一权威源**，完全自包含、不依赖任何外部方法库。分发以整仓为单位。
 
+独立可选组件：[Zotero 中文对照工具](integrations/zotero-bilingual/README.md)在一个阅读标签页中并排显示原 PDF 和中文副本，保护公式、变量和非文字图形。0.3 使用飞桨云端解析、配置的标准模型翻译及本机排版；仅处理用户选择的论文，不改变四个技能的离线执行规则。源码在本仓库维护，插件和本机服务分别安装；密钥入口及正式验收状态见组件内记录。
+
 | 技能 | 覆盖 | 入口 |
 |---|---|---|
 | research-topic | 选题与调研：四步法、问题合同与最近邻反证、论文精读 P1—P9 | [research-topic/SKILL.md](research-topic/SKILL.md) |
-| research-execution | 研究执行：G0—G9 流程关卡、数据准入、任务推进与证据反馈、实验层次与冻结、统计分析、归档复用、项目配置与检查工具 | [research-execution/SKILL.md](research-execution/SKILL.md) |
+| research-execution | 研究执行：G0—G9 流程关卡、数据准入、Markdown 计划拆分与模块状态、证据反馈、实验层次与冻结、统计分析、归档复用、项目配置与检查工具 | [research-execution/SKILL.md](research-execution/SKILL.md) |
 | paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F 图表版式、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
 | report-writing | 非论文文体 R1—R5：进展报告、记录、评审意见 | [report-writing/SKILL.md](report-writing/SKILL.md) |
 
@@ -20,3 +22,13 @@
 ## 迁移说明
 
 本集合于 2026-11-01 由一个中文科研方法库的 v1.8 工作区技能化迁移而来（精读编号 R1—R9 改为 P1—P9 以消除撞号；W/M/F/A、R1—R5、G0—G9 不变）。迁移时的分叉调和、共享物归属裁决与逐轮来源边界的提炼版全部收录在本仓库内（见 SOURCES.md），仓库的使用与维护不需要原方法库。
+
+## 按任务选用的跨 Harness 执行
+
+用户讨论完方案后，可以指定整个实验、阶段或几个模块，由当前Codex主持并让Claude Code执行，模块返回后再审核。任务长、打开项目、存在TASKS或历史上使用过均不自动启动；授权范围内正常修回与推进不逐项确认。
+
+方法与启用边界见[跨Harness任务执行](research-execution/references/跨Harness任务执行.md)，空白片段见[交接模板](research-execution/templates/跨Harness交接.md)，可选运行入口见[Claude Code桥接](integrations/claude-code/README.md)。现有离线任务工具保持不调用模型；桥接的真实run会使用已配置账户的模型额度。
+
+## 按任务选用的GitHub过程记录
+
+用户明确指定任务采用GitHub记录并开始执行后，用一个总览Issue和模块PR展示推进，复用现有Codex审核，通过后自动合并并汇报。几个紧密关联任务可共享PR，任务状态仍只在Markdown维护；未启用项目不增加字段或外部操作。方法与分组边界见[GitHub模块记录](research-execution/references/GitHub模块记录.md)，填写入口见[空白接入模板](research-execution/templates/GitHub记录接入.md)，工具命令与恢复见[GitHub记录组件](integrations/github/README.md)。这项能力独立于Claude Code桥接；本库不自动创建真实实验仓库。
