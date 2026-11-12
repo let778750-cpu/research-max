@@ -74,6 +74,20 @@
 
 **统计报告完整性清单（2026-11-12）**：源自 academic-research-skills 的 statistical_reporting_standards.md（academic-paper-reviewer/references）——通用报告清单与分方法最小报告项。改写：APA 具体格式（小数位、符号样式）通用化为"报告什么"判据，格式随目标刊；补机器学习语境（划分、种子或折、曝光登记），与数据准入及 paper-writing 技能 F14 图注最小项同源不同粒度。边界与反例：清单管报告完整性不管结论解读（解读仍归统计推断与外推节）；缺项要么补齐要么写明不适用，不逐项打勾代替核对。
 
+**二期对标增量（2026-11-12，本地克隆逐文件只读核对）**：以下为第一批登记之外的增量吸收，各来源采纳与边界如下。
+
+| 来源 | 采纳 | 边界与反例 |
+|---|---|---|
+| [deep-research（dzhng）](https://github.com/dzhng/deep-research)（src/deep-research.ts） | 检索式绑定研究目标并逐轮收窄（D1）、学习点蒸馏且必须带来源映射（D2） | 其 learnings 无来源映射、单查询失败静默吞掉、字符串弱去重作为反例登记（D5/D8 不重蹈）；广度减半等数值策略不照搬 |
+| [gpt-researcher](https://github.com/assafelovic/gpt-researcher)（skills/writer.py、curator.py） | 无证据即弃权（D8）、snippet 不当全文引用（D5）、检索失败留痕（D8） | 其多代理编排与来源策展管线不进入本库 |
+| [storm（stanford-oval）](https://github.com/stanford-oval/storm)（outline_generation.py 等） | 先验大纲用证据修订、章节绑定证据格（D7）、多视角提问分别记录（D1） | persona 代理化实现不采纳，视角以提问维度落地 |
+| [paper-qa](https://github.com/future-house/paper-qa)（src/prompts.py） | 逐字引文锚点与位置记录、修订不沿用过期条目（D5） | 其引用键机器校验格式与 CANNOT_ANSWER 哨兵短语机制不随库分发，弃权要求以条文表达 |
+| [paper-writing-skill（SNL-UCSB）](https://github.com/SNL-UCSB/paper-writing-skill) | 引言初稿作护栏、证据后重写（W1）；压缩操作记录前后字数、超半数回结构处理（W10）；整合遍历查术语漂移与首句职责（W10） | 其 M1—M18/S1—S31 双门、红队闭合门与 loop 账本不引入——本库以审查单＋交付闸门表达同类要求；闭合门以"关键问题修复复验后交付、不以轮次用尽放行"条文落地 |
+| [sciwrite（labarba，Sainani 判据）](https://github.com/labarba/sciwrite) | 谓语埋没、被动三分条件、模糊指示词带名词、名词化还原（W9）；二手统计量回核一手（W7） | 香蕉规则、同义词纪律本库 W9 已有（同义词循环条目），不重复登记；摘要 move 审计以 W8 既有功能清单表达 |
+| [Rebuttal-Skill](https://github.com/TobiasLee/Rebuttal-Skill)（补充） | 意见优先级四维（严重度×决策影响×共享度×解决置信）、有依据不执行实验的标注、共享意见合并回应（投稿与修回） | 会议机制（AC 私信、分数-文本不符流程、confidential note）不采纳；重投 R0—R3 积压表属会议语境，期刊转投以可行性评估覆盖 |
+
+以上各仓库均未运行其代码；本库条文为独立改写，不含其原文。
+
 ## report-writing：非论文报告
 
 R1—R5 与风格契约卡直接提炼自两篇交流报告的重写实战（诊断证据：段长变异系数 0.38→0.45 / 0.20→0.37，单一宽度带段落从 58/80、67/71 集中降为四档分布，行首禁则 4/5 处归零，元话语 26→9 / 42→14 次）。适用：非投稿文体；判断依据是"重写是否丢事实、是否用分析腔元话话替代直接陈述"，不是篇数或字数。
