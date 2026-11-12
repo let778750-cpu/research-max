@@ -6,9 +6,9 @@
 
 | 技能 | 覆盖 | 入口 |
 |---|---|---|
-| research-topic | 选题与调研：四步法、问题合同与最近邻反证、论文精读 P1—P9 | [research-topic/SKILL.md](research-topic/SKILL.md) |
+| research-topic | 选题与调研：四步法、问题合同与最近邻反证、近邻命中的处置、深度调研与文献综合 D1—D8、论文精读 P1—P9 | [research-topic/SKILL.md](research-topic/SKILL.md) |
 | research-execution | 研究执行：G0—G9 流程关卡、数据准入、Markdown 计划拆分与模块状态、证据反馈、实验层次与冻结、统计分析、归档复用、项目配置与检查工具 | [research-execution/SKILL.md](research-execution/SKILL.md) |
-| paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F 图表版式、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
+| paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F1—F7 图表版式、F8—F14 科研绘图生产、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
 | report-writing | 非论文文体 R1—R5：进展报告、记录、评审意见 | [report-writing/SKILL.md](report-writing/SKILL.md) |
 
 使用方式：按当前任务从对应 SKILL.md 进入；技能内按"规则地图"只读需要的文件。新研究项目可用 research-execution 的项目骨架或 `scripts/research_infra.py init` 起步。维护约定见 [AGENTS.md](AGENTS.md)；各规则的来源、适用边界与反例见 [SOURCES.md](SOURCES.md)。

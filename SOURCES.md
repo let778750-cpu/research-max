@@ -34,6 +34,10 @@
 
 **精读 P1—P9**：核查七项学者公开策略（Keshav 三遍阅读、Eisner 边读边写、Mitzenmacher 批判性阅读、Carey 等十条规则、Datasheets、Measuring what Matters、Peyton Jones）后按适用范围吸收——采纳按目的选深度、先提取后判断、同假设下重建而不必全量运行；不按名气或星数排序，个人文件组织方式不成标准。另参考 PaperQA2、Ai2 Scholar QA、K-Dense scientific-agent-skills 三个开源仓库（只读未运行）：采纳证据收集与作答分开、先提取可定位内容再综合、先中性理解再映射主张与证据。边界：相关性评分不是证据强度，元数据测试通过不等于语义支持。去重原则：**允许的重复是填写字段，不是第二套规则**。
 
+**深度调研与文献综合 D1—D8（2026-11-12）**：源自 [academic-research-skills](https://github.com/Imbad0202/academic-research-skills) 的 deep-research 技能（本地只读逐文件核对，未运行其检索管线）——检索式五要素与两轮筛选（deep-research/agents/bibliography_agent.md）、去重与多版本关联（其 Step 4.5）、双轴来源分级与利益冲突警示（references/source_quality_hierarchy.md）、三层引用核验＋红旗清单＋拼盘引用反模式（agents/source_verification_agent.md 及其 SKILL.md 反模式表）、矛盾五步消解与张力清单（agents/synthesis_agent.md）、失败路径（references/failure_paths.md）。采纳：工艺流程化、灰色地带记"未核验"、可调和／不可调和二分、综合矩阵角色标注、覆盖声明。边界与反例：不捆绑联网检索脚本——检索用宿主已有工具执行，结果视为待核数据；不照搬其最少篇数（full 10／quick 5）、同行评审占比、偏斜阈值等数值门槛；API 去重改写为 DOI 或题名＋年份＋作者主键的规则型关联；13 代理管线、检查点轮次与 PASS/REVISE 裁定权不进入本库，终局判断保留给研究者。
+
+**近邻命中的处置（2026-11-12）**：来源为用户指定目标——修正 AI 在调研讨论与头脑风暴中的过度防御性新颖性否定（"已在 XX 出现，应从候选撤下"一类终局判决）。方法参照 academic-research-skills 中 devils_advocate 反证针对具体主张而非笼统质疑（deep-research/agents/devils_advocate_agent.md）与 synthesis 不做无分析矛盾陈述的做法。边界与反例：终局判断与放弃决定保留给研究者；反例双方向——直接判死想法与讨好式放宽差异都须拒绝；不引入其检查点轮次与裁定权。
+
 ## research-execution：研究执行
 
 执行域规则主要提炼自真实合作的执行教训：强基线先建立且公平（"方法是否照抄、LLM 有何必要"）、所有方法同分时从逐例预测/实际执行/证据传播/决策改变定位、方案转为绑定产物与复核版本的验收任务、复核输出独立保存防止维护操作污染已验收证据、当前证据可更新而获取与决策历史保留。
@@ -63,6 +67,8 @@
 **A1—A7 附录分工**：区分政策（某刊会某阶段要求）、范文观察（某版本怎样安排）与本仓库建议（可迁移判断）三层——从"某论文这样写"推不出"都应这样写"。政策核对 ICML/NeurIPS/Nature 格式与 SI 说明：评审没有阅读补充材料的义务，正文自足原则（A1、A2）由此而来。七篇范文各取一点（评价原理与可执行细节分层、过程概括配实际标注指令、完整案例落实领域测试、关键负结果留正文、新评价体系分层解释、边界算例解释指标含义、多载体共同支撑论证）。教训：引用范文前先核验材料齐全。
 
 **W9 量化参考带与 F7**：来自《SCI论文方法论手册》部分章节（按适用范围移植，板块化润色与五遍编辑法未采纳，避免与 W3—W8 分工重复）、de-ai-taste 中文信号库三类信号（结构节奏、标点排版、内容姿态）、Gopen & Swan 一句（旧信息在前、重点居尾），以及两篇交流报告重写的实测标定。**标定样本仅两篇，全部阈值为初版，随使用修正**；机械判定并入 writing_lint（rhythm/parity/layout）。
+
+**F8—F14 科研绘图生产（2026-11-12）**：源自 [nature-skills](https://github.com/Yuan1z0825/nature-skills) 的 nature-figure 技能 v2.8.0（Apache-2.0；本地只读摘编改写为中文规则条文，非逐字复制，未运行其脚本）——图形契约要素（references/figure-contract.md）、四原型（static/core/stance.md、references/chart-types.md）、语义色族与无障碍判据（references/design-theory.md）、刊印尺寸与渲染后检查项（references/qa-contract.md）、多面板证据架构（references/multipanel-evidence-architecture.md）、图注统计最小项。mplstyle 示例的键项另参考 [SciencePlots](https://github.com/garrettj403/SciencePlots)（仅样式条目类别，未采纳其具体取值）。边界与反例：Nature 单双栏毫米、字号 pt、面板标号规格与色板 hex 均为期刊语境值，不作通用规则，具体值由项目配置域（字体版式、图件载体）决定、未知填 null；不引入其 AI 生图联网路线（生成式图像诚信沿用本库 F2/F3）、后端排他约束与 Python QA 脚本分发；随附 figure_style.template.mplstyle 为全注释示例。
 
 ## report-writing：非论文报告
 
