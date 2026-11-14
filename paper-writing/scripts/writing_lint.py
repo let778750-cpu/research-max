@@ -3,6 +3,9 @@
 边界：只用本地文件，不联网、不调用模型、不改动被检文件。阈值是W9量化参考带的初版实现，
 判定分两级——警告=提示人工复查，失败=按规则不得交付；工具通过只代表机械项通过，
 不替代科学内容审查。layout模块依赖PyMuPDF（fitz），未安装时报错退出。
+节奏类均匀指标按2026-11-15证据重标为只警告不失败（见SOURCES.md成稿去AI味条目）；
+成稿去AI味的分级检测与语义判读是另一工具 ai_tone_detect.py（候选报告，非交付闸门），
+判据见 references/成稿去AI味检测与语义判据.md。
 
 用法（建议设置 PYTHONUTF8=1）：
   python writing_lint.py rhythm <稿件.md>
@@ -18,11 +21,11 @@ import sys
 from pathlib import Path
 
 # ---- W9量化参考带（初版标定，随使用修正；见 references/论文组织与语言规范.md）----
-CV_MIN_FAIL = 0.25          # 段长变异系数低于此值→失败（正文段≥30段时才判）
-CV_MIN_WARN = 0.30          # 低于此值→警告
-BAND_FAIL = 0.70            # 单一80字宽度带段落占比超过→失败
-BAND_WARN = 0.60            # 超过→警告
-SENT_RUN = 5                # 连续N句落同一20字带→警告
+# 2026-11-15 重标：句长/段长均匀度实测人机无差异（见SOURCES.md成稿去AI味条目），
+# 均匀类指标降为可读性警告，不再设失败门；失败级仅保留内容守恒与排版类。
+CV_MIN_WARN = 0.30          # 段长变异系数低于此值→警告（正文段≥30段时才判）
+BAND_WARN = 0.60            # 单一80字宽度带段落占比超过→警告
+SENT_RUN = 5                # 连续N句落同一20字带→警告（提示复查，不逐句必改）
 META_PER_1000 = 3.0         # 元话语标记每千字超过→警告
 BOLD_COLON_MAX = 2          # 加粗冒号公式句全篇上限→警告
 DUNHAO_PARA_GROUPS = 3      # 单段内“四项以上顿号并列”达到→警告
@@ -58,15 +61,12 @@ def cmd_rhythm(md_path):
         for l in lens:
             bands[min(l // 80, 4)] = bands.get(min(l // 80, 4), 0) + 1
         top_share = max(bands.values()) / len(lens)
-        if cv < CV_MIN_FAIL:
-            findings.append({"级": "失败", "项": "段长变异系数", "值": round(cv, 2),
-                             "说明": "段落均匀配重（参考带0.30—0.60）"})
-        elif cv < CV_MIN_WARN:
-            findings.append({"级": "警告", "项": "段长变异系数", "值": round(cv, 2)})
-        if top_share > BAND_FAIL:
-            findings.append({"级": "失败", "项": "单一宽度带段落占比", "值": f"{top_share:.0%}"})
-        elif top_share > BAND_WARN:
-            findings.append({"级": "警告", "项": "单一宽度带段落占比", "值": f"{top_share:.0%}"})
+        if cv < CV_MIN_WARN:
+            findings.append({"级": "警告", "项": "段长变异系数", "值": round(cv, 2),
+                             "说明": "可读性参考（参考带0.30—0.60）；均匀度实测人机无差异，不为节奏制造参差"})
+        if top_share > BAND_WARN:
+            findings.append({"级": "警告", "项": "单一宽度带段落占比", "值": f"{top_share:.0%}",
+                             "说明": "可读性参考，不设失败门"})
     sentences = [s for p in body for s in re.split(r"[。；？！]", p) if s.strip()]
     runs = 0
     cur_band, cur_run = None, 0

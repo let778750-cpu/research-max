@@ -54,12 +54,12 @@ description: 用于交流报告、进展记录、评审意见等非投稿文体�
 
 ## 交付闸门
 
-1. **机械自检**：运行同仓库 paper-writing 技能 `scripts/writing_lint.py`——`parity <原稿.md> <新稿.md>` 查内容守恒（对应R5），`rhythm <稿件.md>` 查节奏与元话语（对应R4，启用与否按风格契约卡），`layout <成品.pdf>` 查中文 PDF 排版。判定两级：警告＝人工复查，失败＝不得交付；通过只代表机械项通过。
+1. **机械自检**：运行同仓库 paper-writing 技能 `scripts/writing_lint.py`——`parity <原稿.md> <新稿.md>` 查内容守恒（对应R5），`rhythm <稿件.md>` 查节奏与元话语（对应R4，启用与否按风格契约卡），`layout <成品.pdf>` 查中文 PDF 排版。判定两级：警告＝人工复查，失败＝不得交付；通过只代表机械项通过。成稿如需去AI味分级清理，按名使用同技能 `scripts/ai_tone_detect.py`（阈值与判据归 paper-writing 技能，流程见其成稿去AI味检测与语义判据；同样不得虚构"人味"素材）。
 2. **写后对照**：按[风格契约卡](templates/风格契约卡.md)逐项核对写前承诺，偏差与处理记入末栏。
 
 ## 边界
 
 - 适用于非投稿文体；期刊会议稿件按 paper-writing 技能，选题调研与内容核查按 research-topic 技能，研究流程管理按 research-execution 技能——均按名使用不复制规则。
-- 本技能无自有脚本：写作机械自检的唯一权威是 paper-writing 技能的 writing_lint.py，按名调用，不复制副本（见顶层 AGENTS.md 例外登记）。
+- 本技能无自有脚本：写作机械自检的唯一权威是 paper-writing 技能的 writing_lint.py，按名调用，不复制副本（见顶层 AGENTS.md 例外登记）；成稿去AI味检测同用其 ai_tone_detect.py，不另建副本。
 - 风格契约卡保持空白；量化参考带阈值随 paper-writing 技能 W9 维护，本卡只记录是否启用与例外。
 - 规则在本目录单一维护，修订时不新增对外部文件的依赖。
