@@ -26,6 +26,10 @@
 - 图像工具的实际模型身份、字体文件与分辨率：如实记载；低分辨率原图不能继承为"已验收"。
 - 旧项目的验收状态、实验数值与存储位置：历史记录，不是新项目的先验。
 
+## 项目 AGENTS 入口与规则分层（2026-11-12）
+
+核对 [AGENTS.md 开放约定](https://agents.md/)与 [Codex 官方加载说明](https://learn.chatgpt.com/docs/agent-configuration/agents-md)：项目入口保留长期原则、路径与任务路由，详细流程按需读取；目录发现不等于任意跨目录聊天都会加载目标项目文件。参考 [HumanLayer 的指令文件经验](https://www.humanlayer.dev/blog/writing-a-good-claude-md)及 [steipete/agent-scripts 的 AGENTS.MD](https://github.com/steipete/agent-scripts/blob/main/AGENTS.MD)中的精简常驻内容、按需查阅项目资料与验证实际结果的做法，不移植其特定工具、提交习惯或授权范围。用户提供的 AGENTS 样例仅作结构参考，文档里的命令不视为当前执行指令。此次按用户确认范围统一两项目原则与路由，保留各自任务状态入口；约 80 行、8 KiB 是本次项目维护目标，不冒称官方限制。
+
 ## research-topic：选题与调研
 
 **四步法**：源自一次真实合作中用户提出的调研顺序与随后认可的研究进展报告。适用：宽泛方向细化、阶段性调研与选题汇报；已有具体问题时可跳过无关步骤。反例：只列方法名称、用早期准备索引否定后来完成的实验、把行为标签当更强的目标真值、把全部候选想法写成同等成熟的课题。源报告的场景选择、想法数量、实验数值与设备不作为通用要求。
@@ -37,6 +41,18 @@
 **深度调研与文献综合 D1—D8（2026-11-12）**：源自 [academic-research-skills](https://github.com/Imbad0202/academic-research-skills) 的 deep-research 技能（本地只读逐文件核对，未运行其检索管线）——检索式五要素与两轮筛选（deep-research/agents/bibliography_agent.md）、去重与多版本关联（其 Step 4.5）、双轴来源分级与利益冲突警示（references/source_quality_hierarchy.md）、三层引用核验＋红旗清单＋拼盘引用反模式（agents/source_verification_agent.md 及其 SKILL.md 反模式表）、矛盾五步消解与张力清单（agents/synthesis_agent.md）、失败路径（references/failure_paths.md）。采纳：工艺流程化、灰色地带记"未核验"、可调和／不可调和二分、综合矩阵角色标注、覆盖声明。边界与反例：不捆绑联网检索脚本——检索用宿主已有工具执行，结果视为待核数据；不照搬其最少篇数（full 10／quick 5）、同行评审占比、偏斜阈值等数值门槛；API 去重改写为 DOI 或题名＋年份＋作者主键的规则型关联；13 代理管线、检查点轮次与 PASS/REVISE 裁定权不进入本库，终局判断保留给研究者。
 
 **近邻命中的处置（2026-11-12）**：来源为用户指定目标——修正 AI 在调研讨论与头脑风暴中的过度防御性新颖性否定（"已在 XX 出现，应从候选撤下"一类终局判决）。方法参照 academic-research-skills 中 devils_advocate 反证针对具体主张而非笼统质疑（deep-research/agents/devils_advocate_agent.md）与 synthesis 不做无分析矛盾陈述的做法。边界与反例：终局判断与放弃决定保留给研究者；反例双方向——直接判死想法与讨好式放宽差异都须拒绝；不引入其检查点轮次与裁定权。
+
+**全文获取、Markdown 精读与接续成本（2026-11-12；2026-11-18 补强）**：用户明确要求真实溯源、摘要初筛后获取全文、以本地 Markdown 深读，并在全文不可得时尽早提供手动获取信息；首轮在既有 D1—D8、P1—P9、模板及协作与接续中定向补充。2026-11-18 用户重申并升格：依赖全文的精读以全文本地落盘并转换为可用 Markdown 为硬前提，下载受阻时及时暂停该精读线、批次收尾汇总全量缺口清单交用户获取、用户补入并通知后才接续；已同步 D1 获取段、D8 失败路径、SKILL 场景流程与贯穿红线及多智能体基座项目 AGENTS（R5）。反例：静默用摘要顶替全文、逐条零散索要、未等用户通知即自行推进。项目 AGENTS 只保留原则与任务路由，不统一项目状态后端。
+
+**前沿覆盖倾斜（2026-11-18）**：用户要求调研覆盖与阅读投入向最新、前沿的高质量文献倾斜，经典方法取建立原理与成熟基线所需即可，不以旧经典挤占前沿覆盖。与既有“不按新鲜度打分、近五年不能替代质量”护栏兼容：倾斜作用于覆盖与投入分配，质量判断仍以适配性与证据为准。已写入问题与创新论证“最近邻与反证”、SKILL 贯穿红线及多智能体基座项目 AGENTS（R5）。反例：整轮调研只罗列旧经典不触前沿，或以“够新”为由跳过必引的经典出处。
+
+| 来源与核查范围 | 采纳内容 | 不适用边界 |
+|---|---|---|
+| [PaperQA README](https://github.com/Future-House/paper-qa/blob/main/README.md)，只读检索、证据收集、作答、索引复用与固定调用路径说明；所读 Git blob `af05b404aacd6aa3bc6792fcfb650902fc666c1f` | 复用已有材料与索引；证据收集和综合分开；减少重复处理与无效编排 | 作者对固定调用路径开销的说明不证明本项目能节省多少 token；不安装框架，不采用其评分作为科学质量认证 |
+| [ScholarQA 实现](https://github.com/allenai/ai2-scholarqa-lib/blob/main/api/scholarqa/scholar_qa.py)，只读摘录、聚类、迭代综合与来源元数据相关实现；所读 Git blob `0f65304725c9e136055e271ecebb7927c30d2b5b` | 摘录—组织—综合，保留来源定位与条件 | 实现允许摘要进入证据提取，不能把其问答流程或摘录结果当作论文全文精读；不引入模型、代理或预算默认值 |
+| [Docling 文档结构](https://docling-project.github.io/docling/concepts/docling_document/)及[项目说明](https://github.com/docling-project/docling/blob/main/README.md)，只读层级、文本、图表与来源信息说明 | Markdown 阅读保留原件对应、结构与来源；转换检查和理解检查分开，关键公式、表格与疑点回查原件 | 文档结构能力不保证每份转换正确，也不证明 Markdown 天然消除幻觉；不绑定转换器、不安装新工具 |
+
+上述为文档与源码核查，未运行相关系统。规则场景走查只检查所查情形的适用性，不是成本或科研效果评测；对话轮次、文件读取量等代理指标不能冒充真实 token 或费用。题录、转换、阅读与接续字段复用既有记录，不建立第二套文献台账。
 
 ## research-execution：研究执行
 
