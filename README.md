@@ -1,6 +1,6 @@
 # research-max：科研全流程技能集合
 
-四个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库为**规则唯一权威源**，完全自包含、不依赖任何外部方法库。分发以整仓为单位。
+五个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库为**规则唯一权威源**，完全自包含、不依赖任何外部方法库。分发以整仓为单位。
 
 独立工具：Zotero 中文对照（原 integrations/zotero-bilingual）已独立为公开项目 [transfer-plus](https://github.com/let778750-cpu/transfer-plus)，0.4.x 起以该仓库为唯一权威，本仓库不再维护其源码。
 
@@ -10,6 +10,7 @@
 | research-execution | 研究执行：G0—G9 流程关卡、数据准入、Markdown 计划拆分与模块状态、证据反馈、实验层次与冻结、统计分析、归档复用、项目配置与检查工具 | [research-execution/SKILL.md](research-execution/SKILL.md) |
 | paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F1—F7 图表版式、F8—F14 科研绘图生产、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
 | report-writing | 非论文文体 R1—R5：进展报告、记录、评审意见 | [report-writing/SKILL.md](report-writing/SKILL.md) |
+| turn-report | 逐轮汇报 T1—T7：结论先行、证据锚定、边界集中、缩写首现 | [turn-report/SKILL.md](turn-report/SKILL.md) |
 
 使用方式：按当前任务从对应 SKILL.md 进入；技能内按"规则地图"只读需要的文件。新研究项目可用 research-execution 的项目骨架或 `scripts/research_infra.py init` 起步。维护约定见 [AGENTS.md](AGENTS.md)；各规则的来源、适用边界与反例见 [SOURCES.md](SOURCES.md)。
 

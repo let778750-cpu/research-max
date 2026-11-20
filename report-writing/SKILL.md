@@ -59,7 +59,7 @@ description: 用于交流报告、进展记录、评审意见等非投稿文体�
 
 ## 边界
 
-- 适用于非投稿文体；期刊会议稿件按 paper-writing 技能，选题调研与内容核查按 research-topic 技能，研究流程管理按 research-execution 技能——均按名使用不复制规则。
+- 适用于非投稿文体；期刊会议稿件按 paper-writing 技能，选题调研与内容核查按 research-topic 技能，研究流程管理按 research-execution 技能——均按名使用不复制规则。每轮任务完成后的对外汇报按 turn-report 技能；本技能只管文档正文。
 - 本技能无自有脚本：写作机械自检的唯一权威是 paper-writing 技能的 writing_lint.py，按名调用，不复制副本（见顶层 AGENTS.md 例外登记）；成稿去AI味检测同用其 ai_tone_detect.py，不另建副本。
 - 风格契约卡保持空白；量化参考带阈值随 paper-writing 技能 W9 维护，本卡只记录是否启用与例外。
 - 规则在本目录单一维护，修订时不新增对外部文件的依赖。
