@@ -199,3 +199,7 @@ R1—R5 与风格契约卡直接提炼自两篇交流报告的重写实战（诊
 **结论先行的既有实践（2026-11-20）**：Plain Writing Act 2010 与 BLUF（Bottom Line Up Front，结论前置）作为公开先例；ASD-STE100 简化技术英语（ASD 标准，版权归 ASD，仅取"一句一义、主动语态、避免名词堆叠"的思想，不复制规则与受控词表）。内部复用 report-writing 的 R4 直接陈述、paper-writing 的 W9/W10 与成稿去 AI 味检测与语义判据（A/B/C 分级；该文件的 X 级在本技能改称 P 级，避免同名异义）、论文组织与语言规范的"缩写首次给全称、不编造缩写展开词"。边界：文档成稿仍归 W9；本技能不复制其判据，只做逐轮汇报的结构与措辞。
 
 **完成声明需可验（2026-11-20）**：参考 [obra/superpowers](https://github.com/obra/superpowers) 的 verification-before-completion 技能（只读，未运行），采纳"没有运行验证不得声称完成"。边界：不引入其审批菜单、每轮全量测试与嵌套流程；T2 只要求在汇报里标注证据状态，不改变项目既定的验收流程。
+
+## project-agents：项目侧 AGENTS 模板
+
+**项目侧 AGENTS 模板（2026-11-20）**：来源为 [AGENTS.md 开放约定](https://agents.md/)与 [Codex 官方加载说明](https://learn.chatgpt.com/docs/agent-configuration/agents-md)（本文件"项目 AGENTS 入口与规则分层"条目已核）及 [HumanLayer 的指令文件经验](https://www.humanlayer.dev/blog/writing-a-good-claude-md)：项目入口保留长期原则、路径与按需读取路由，详细流程放技能内按需加载；目录发现不等于任意跨目录聊天都会加载目标项目文件。模板由一份真实项目的常驻约定抽象而来，删除全部项目名、目录、状态后端、领域参数与验收状态，只保留通用结构与占位符。适用：新建或改造研究项目的根 AGENTS.md。边界与反例：不携带来源项目的模型、预算、题名与验收状态；不复制技能正文，避免两处维护；占位符与 null 保留给使用方填写；模板随仓库分发，但不参与 research-max 自身的维护判断。
