@@ -135,6 +135,8 @@ DEFAULT_ALLOW = frozenset(
         "YAML", "YML", "TOML", "XML", "HTML", "HTTP", "HTTPS", "MD", "PY", "ZIP", "TXT",
         # 通用标识与约定
         "UTC", "GPS", "API", "GPU", "CPU", "URL", "URI", "ID", "OK", "OS", "IO", "SDK",
+        # 仓库常见文件名（是文件名，不是缩写，按 T7 的文件名例外免展开）
+        "AGENTS", "CLAUDE", "README", "SOURCES", "TASKS", "PLAN", "LICENSE", "CHANGELOG",
         # 专名与标准编号
         "WGS84", "WGS72", "J2000", "ISO", "IEC", "IEEE", "GB",  # GB 同时是吉字节，白名单只免展开
     }

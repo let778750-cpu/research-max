@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""test_reply_lint.py — reply_lint.py 的自测：十二个正反例。
+"""test_reply_lint.py — reply_lint.py 的自测：十四个正反例。
 
 运行（在本目录）：
     python -m unittest discover -s . -p "test_*.py" -v
@@ -72,6 +72,8 @@ WHITELIST_SAMPLE = "结论：几何核对通过（`geo.py:12`）。坐标用 WGS
 
 ALLOW_SAMPLE = "结论：先用大邻域搜索重排，再回放校验（`plans.csv`）。LNS 共运行 3 次。"
 
+FILENAME_SAMPLE = "结论：按 README 与 AGENTS 的分工改完，3 处引用同步到 SOURCES 与 TASKS（`docs.md`）。"
+
 
 class ReplyLintTest(unittest.TestCase):
     def test_01_good_sample_passes(self):
@@ -143,6 +145,11 @@ class ReplyLintTest(unittest.TestCase):
             path = Path(tmp) / "allow.txt"
             path.write_text("# 注释\nLNS\n\nMILP\n", encoding="utf-8")
             self.assertEqual(load_allow(path), {"LNS", "MILP"})
+
+    def test_14_repo_filenames_not_treated_as_acronyms(self):
+        result = lint_text(FILENAME_SAMPLE)
+        r7 = next(c for c in result["checks"] if c["id"] == "R7")
+        self.assertEqual(r7["level"], "pass", r7["message"])
 
 
 if __name__ == "__main__":
