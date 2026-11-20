@@ -1,6 +1,6 @@
 # research-max 维护约定
 
-- 本仓库是科研全流程技能集合：paper-writing（论文写作）、research-topic（选题与调研）、research-execution（研究执行）、report-writing（非论文报告）、turn-report（逐轮汇报）。分发以整仓为单位，仓库自包含，不依赖任何外部方法库。
+- 本仓库是科研全流程技能集合：paper-writing（论文写作）、research-topic（选题与调研）、research-execution（研究执行）、report-writing（非论文报告）、turn-report（逐轮汇报）、effort-guard（投入与止损）。分发以整仓为单位，仓库自包含，不依赖任何外部方法库。
 - 每条规则在所属技能的 references/ 内单一维护；技能间共享模板与脚本只随一个技能分发，消费方按名提及（写技能名+文件名纯文本），禁止跨技能 markdown 链接与 `../`。
 - 技能内链接不得越出技能目录；不得出现私有绝对路径。顶层 README 与 SOURCES.md 是跨技能链接和仓库级说明的唯一例外。
 - 每类规则的来源、适用边界与反例记录在 [SOURCES.md](SOURCES.md)；修改规则前先核对其边界，适用条件变化时同步更新，不默默放宽。新增经验先给适用范围、反例和验证依据，再进入技能正文。

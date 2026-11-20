@@ -203,3 +203,35 @@ R1—R5 与风格契约卡直接提炼自两篇交流报告的重写实战（诊
 ## project-agents：项目侧 AGENTS 模板
 
 **项目侧 AGENTS 模板（2026-11-20）**：来源为 [AGENTS.md 开放约定](https://agents.md/)与 [Codex 官方加载说明](https://learn.chatgpt.com/docs/agent-configuration/agents-md)（本文件"项目 AGENTS 入口与规则分层"条目已核）及 [HumanLayer 的指令文件经验](https://www.humanlayer.dev/blog/writing-a-good-claude-md)：项目入口保留长期原则、路径与按需读取路由，详细流程放技能内按需加载；目录发现不等于任意跨目录聊天都会加载目标项目文件。模板由一份真实项目的常驻约定抽象而来，删除全部项目名、目录、状态后端、领域参数与验收状态，只保留通用结构与占位符。适用：新建或改造研究项目的根 AGENTS.md。边界与反例：不携带来源项目的模型、预算、题名与验收状态；不复制技能正文，避免两处维护；占位符与 null 保留给使用方填写；模板随仓库分发，但不参与 research-max 自身的维护判断。
+
+## effort-guard：投入与止损
+
+**用户观察（2026-11-20）**：来源为本轮真实对话——用户指出执行模型（Codex 与 GPT 组合）在实验与项目中不估算时间、token、精力与迭代维护成本，随便开工，出错后大量测试与打补丁。用户同时提出反证条件：这样的规则会不会压制模型的发散能力。本技能即按这两条约束设计：既设止损，也不把成本闸前置到探索阶段。适用：多步、多轮或产生费用工作的过程决策。反例：以"用户已说过"为由照抄某次阈值或某项目预算。
+
+**LLM 编码失败模式（Karpathy，2026-01）**：原帖在 X，本仓库未直接抓取；据 [DEV 社区整理](https://dev.to/evan-dong/why-your-ai-coding-assistant-keeps-overengineering-4-rules-that-actually-fix-it-d8a)、[malskill 的 code-guidelines](https://github.com/aeondave/malskill/blob/main/coding/code-guidelines/SKILL.md) 与 npm 包说明三处转述互相一致：模型替你假设且不核对、把代码与 API 复杂化、为简单需求写上千行、顺手改动与任务无关的代码。采纳其行为条目，改写为 E3 最小起点、E4 一次一处。边界与反例：二手转述，未见原文逐字；不把"少写代码"当省事借口，也不把作者的个人风格当标准。
+
+**最简方案优先（Anthropic，2024-12）**：[Building effective agents](https://www.anthropic.com/research/building-effective-agents) 的核心句是 find the simplest solution possible, and only increase complexity when needed。原页在本机抓取失败，经一份课程转引核对（措辞一致）。采纳为 E3。边界与反例：该文面向 agent 系统设计，不构成科研投入阈值；"简单"不指代码行数少，而指组件与自主度够用即可。
+
+**YAGNI 的时机论（Kent Beck，2026-06-24）**：[The Cost YAGNI Was Never About](https://newsletter.kentbeck.com/p/the-cost-yagni-was-never-about)（已读全文）。核心：YAGNI 不是省钱，而是期权与时间价值两笔账；提前建结构等于在信息到达前行使选择权，模型"不懂 YAGNI"，生成变便宜只让违反更便宜、理解更少。采纳为 E3、E8 与探索保护。边界与反例：YAGNI 不等于不设计，作者明言"需要就建"；本文的净现值论证借自软件设计语境，不直接换算科研投入。
+
+**thrash 阈值与治理（Zenodo 预印本，2026-02-13）**：[Governed Agentic Coding](https://zenodo.org/records/18629666)（已读摘要与描述）。现象：循环拉长后声明失去约束力、范围溶解、执行者自授权；经济后果是反复调试、回归震荡与调用消耗。采纳其现象命名与"把停机与拒绝当一等成功"的结构建议（E5、E6）。边界与反例：单作者预印本，非同行评审；不采用其 Governor/Coder 双会话架构，也不把其阈值数字当通用标准。
+
+**自估预算不可靠（NeurIPS 2026）**：[Budget Guard](https://neurips.cc/virtual/2026/loc/sydney/168981)（已读摘要）。长周期 agent 自报的剩余预算区间覆盖率仅 2%—52%，外置校准区间在 19 组中 18 组超过 85%；多资源环境可行性闸把每次成功成本从 $1.61M 降到 $0.87M，但单资源 token 任务只省 3%—7%。采纳：外置判据、按区间不用点估计、收益集中在时间与人工同时受限的场景（E1、E6）。边界与反例：回放而非在线部署；单一环境案例，不外推节省比例。
+
+**预算感知（ICML 2026）**：[Towards Budget-Aware Agents](https://icml.cc/virtual/2026/67798)（页面抓取失败，仅据检索摘要）。把预算感知形式化为"中间过程能否给出剩余资源区间以及任务是否仍可完成"。采纳其问题定义，用于 E1 要求写区间。边界：未读全文，不引用其指标数值。
+
+**有界循环原语（2025—2026 社区对照）**：[agentsop 的跨框架对照](https://github.com/agentsope/skillalchemy/blob/955562e4416c483da946e9c95a1c3974ac52df3c/skills/agentsop-bounded-loop/references/R2-cross-framework.md)列出 LangGraph `recursion_limit=25`、OpenAI Agents SDK `max_turns`，并指出"把上限调高来修循环"是已知陷阱。采纳为 E5 的"不静默放宽"。边界：第三方技能库整理，未经独立验证；不同框架语义不可直接换算。
+
+**两次停手的工程经验（社区 CLAUDE.md）**：[claude-code-guide](https://github.com/ytrofr/claude-code-guide/blob/refs/heads/main/best-practices/BEST-PRACTICES.md) 记录"同一 bug 两次失败必须停、先追踪数据流再改"。采纳为默认阈值 2（E5）。边界与反例：个人工程经验，非对照评测；阈值可被任务覆盖，改则写明。
+
+**时间压力与创造力（Amabile 等，HBR 2002）**：[Creativity Under the Gun](https://store.hbr.org/product/creativity-under-the-gun/R0208C)（摘要与 [APA 报道](https://www.apa.org/monitor/nov02/tickingclock.html)）。九千余份工作日记显示时间压力通常降低创造性探索，而当事人常自以为更努力。采纳为探索保护：预算压力不施加在"要不要想"（第二节）。边界：人类组织研究，迁移到 agent 属类比，不作因果外推。
+
+**约束与创造力的倒 U 形（Acar、Tarakci、van Knippenberg，2019）**：Journal of Management 45(1):96—121，DOI 10.1177/0149206318805832（读过摘要与引用）。约束过少与过多都抑制创造性产出，中等约束配合自主性最优。采纳为"只在决策点施加、强度中等"。边界：组织行为学证据，不提供可套用的数值阈值。
+
+**重复采样的收益与瓶颈（2024）**：[Large Language Monkeys](https://arxiv.org/abs/2407.21787)（已读摘要）。覆盖率随采样数对数线性增长；SWE-bench Lite 从单次 15.9% 到 250 次 56%；无自动验证器时多数投票与奖励模型在几百样本后饱和。采纳为 E7 选择器条件与探索保护。边界与反例：编码与形式证明可自动验证，科研判断多数不可；覆盖率不等于可用性。
+
+**可控的测试时计算（2025）**：[s1](https://ar5iv.labs.arxiv.org/html/2501.19393)。预算强制既能强制终止、也能追加"Wait"延长，可控性本身带来正向 scaling。采纳为"闸要能松开"，支撑按难度分级。边界：推理模型实验，不直接外推到工程修复循环。
+
+**过度思考（ICML 2025）**：[Do NOT Think That Much for 2+3=?](https://icml.cc/virtual/2025/poster/45540)。长推理模型在简单问题上产生冗余推理，存在可压缩空间。采纳为按难度分级的收紧依据。边界：仅据摘要，未复现其压缩方法。
+
+**过早收敛与多样性（类比来源）**：[Premature convergence in morphology and control co-evolution](https://produccion.siia.unam.mx/Publicaciones/ProdCientif/PublicacionFrw.aspx?id=649478)。目标驱动的搜索会丢多样性，质量-多样性类方法为对抗此点而设计。采纳为"单一判据越早介入，替代路线越少"。边界与反例：演化计算结论，迁移到研究工作流属类比，不作为 LLM 行为的直接证据。
