@@ -122,7 +122,7 @@ ANCHOR_PATTERNS = (
 )
 
 ACR_RE = re.compile(r"\b[A-Z][A-Z0-9]{1,7}\b")
-ID_LIKE_RE = re.compile(r"^[A-Z]\d+$")
+ID_LIKE_RE = re.compile(r"^(?:[A-Z]\d+|FIG\d+)$")  # 规则标号（G0、T1、E1、FIG4）不是缩写
 BRACKET_RE = re.compile(r"[（(][^（()）\n]{2,160}[）)]")
 LATIN_WORD_RE = re.compile(r"[A-Za-z]{2,}")
 
@@ -136,7 +136,7 @@ DEFAULT_ALLOW = frozenset(
         # 通用标识与约定
         "UTC", "GPS", "API", "GPU", "CPU", "URL", "URI", "ID", "OK", "OS", "IO", "SDK",
         # 仓库常见文件名（是文件名，不是缩写，按 T7 的文件名例外免展开）
-        "AGENTS", "CLAUDE", "README", "SOURCES", "TASKS", "PLAN", "LICENSE", "CHANGELOG",
+        "AGENTS", "CLAUDE", "README", "SOURCES", "TASKS", "PLAN", "LICENSE", "CHANGELOG", "SKILL",
         # 专名与标准编号
         "WGS84", "WGS72", "J2000", "ISO", "IEC", "IEEE", "GB",  # GB 同时是吉字节，白名单只免展开
     }
