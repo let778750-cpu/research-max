@@ -1,6 +1,6 @@
 # research-max：科研全流程技能集合
 
-六个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库为**规则唯一权威源**，完全自包含、不依赖任何外部方法库。分发以整仓为单位。
+七个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库为**规则唯一权威源**，完全自包含、不依赖任何外部方法库。分发以整仓为单位。
 
 独立工具：Zotero 中文对照（原 integrations/zotero-bilingual）已独立为公开项目 [transfer-plus](https://github.com/let778750-cpu/transfer-plus)，0.4.x 起以该仓库为唯一权威，本仓库不再维护其源码。
 
@@ -10,7 +10,8 @@
 |---|---|---|
 | research-topic | 选题与调研：四步法、问题合同与最近邻反证、近邻命中的处置、深度调研与文献综合 D1—D8、论文精读 P1—P9 | [research-topic/SKILL.md](research-topic/SKILL.md) |
 | research-execution | 研究执行：G0—G9 流程关卡、数据准入、Markdown 计划拆分与模块状态、证据反馈、实验层次与冻结、统计分析、归档复用、项目配置与检查工具 | [research-execution/SKILL.md](research-execution/SKILL.md) |
-| paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F1—F7 图表版式、F8—F14 科研绘图生产、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
+| paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F1—F7 图表版式、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
+| figure-craft | 科研图件：把数据与实验结果做成可发表的数据图——图件契约、数据剖面与图型决策、误差与不确定性表达、分布与个体点、多面板与配色、刊印尺寸、导出与出图自检、图注统计最小项；含离线检查工具 | [figure-craft/SKILL.md](figure-craft/SKILL.md) |
 | report-writing | 非论文文体 R1—R5：进展报告、记录、评审意见 | [report-writing/SKILL.md](report-writing/SKILL.md) |
 | turn-report | 逐轮汇报：把每轮任务结果讲成能直接决策的一段话——先给判断与可用性，每条结论带可查证据，局限与未做合并交代，措辞按证据强度分级，去掉模板腔与空泛词，篇幅随判断量，缩写首次出现给全称 | [turn-report/SKILL.md](turn-report/SKILL.md) |
 | effort-guard | 投入与止损：多步工作开工前算清时间、调用与人工复核的成本；先摆可比较的路线再收敛；同一失败两次停手；继续、收缩还是停用信息闸与成本闸判断；重写先计价；汇报带成本账。探索期按信息增益停，成本不否决发散 | [effort-guard/SKILL.md](effort-guard/SKILL.md) |
@@ -29,6 +30,7 @@
 | research-max 按任务路由 | 什么任务读哪个 SKILL.md，用到哪一步为止，哪些动作不自动授权 | 本仓库各技能 |
 | 逐轮汇报 | 每轮交付怎么讲：判断、证据、边界、强度、缩写 | turn-report 的 T1—T7 |
 | 投入与止损 | 多轮任务怎么开工、卡住几次停手、何时收缩或重写、汇报带哪些成本账 | effort-guard 的 E1—E9 |
+| 图件生产 | 结果图与误差图怎么选型、怎么画、怎么导出与自检 | figure-craft 的 FIG1—FIG11 |
 | 独立判断与研究讨论 | 不附和、先机制后创新、近邻命中的处置、范围交代 | research-topic |
 | 研究与验收 | 基线、对照、真值与仿真分离、工程自检与科学 Gate 分级 | research-execution |
 | 渐进推进、记录与规范维护 | AGENTS、PLAN、TASKS 的分工；证据绑定；目录维护 | research-execution |

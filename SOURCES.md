@@ -69,7 +69,7 @@
 
 **W9 量化参考带与 F7**：来自《SCI论文方法论手册》部分章节（按适用范围移植，板块化润色与五遍编辑法未采纳，避免与 W3—W8 分工重复）、de-ai-taste 中文信号库三类信号（结构节奏、标点排版、内容姿态）、Gopen & Swan 一句（旧信息在前、重点居尾），以及两篇交流报告重写的实测标定。**标定样本仅两篇，全部阈值为初版，随使用修正**；机械判定并入 writing_lint（rhythm/parity/layout）。2026-11-15 按 lieflat-less-ai-tone 配对复测证据重标：句长/段长均匀度实测人机无差异，段长CV与宽度带占比从失败门降为可读性警告（见下条登记），其余阈值不变。
 
-**F8—F14 科研绘图生产（2026-11-12）**：源自 [nature-skills](https://github.com/Yuan1z0825/nature-skills) 的 nature-figure 技能 v2.8.0（Apache-2.0；本地只读摘编改写为中文规则条文，非逐字复制，未运行其脚本）——图形契约要素（references/figure-contract.md）、四原型（static/core/stance.md、references/chart-types.md）、语义色族与无障碍判据（references/design-theory.md）、刊印尺寸与渲染后检查项（references/qa-contract.md）、多面板证据架构（references/multipanel-evidence-architecture.md）、图注统计最小项。mplstyle 示例的键项另参考 [SciencePlots](https://github.com/garrettj403/SciencePlots)（仅样式条目类别，未采纳其具体取值）。边界与反例：Nature 单双栏毫米、字号 pt、面板标号规格与色板 hex 均为期刊语境值，不作通用规则，具体值由项目配置域（字体版式、图件载体）决定、未知填 null；不引入其 AI 生图联网路线（生成式图像诚信沿用本库 F2/F3）、后端排他约束与 Python QA 脚本分发；随附 figure_style.template.mplstyle 为全注释示例。图中文字字形缺失告警经验来自 2026-11-12 实测（默认字体无中文字形，登记含所需字形字体后消除）。
+**绘图生产迁出（2026-11-21）**：原 F8—F14 的规则、模板与来源整体迁至 figure-craft 技能，改写为 FIG1—FIG11 并扩写；本条只保留历史指向，不再维护，现行登记见下文 `## figure-craft：科研图件` 节。
 
 **审稿意见路线图与回复信（2026-11-12）**：源自 [academic-research-skills](https://github.com/Imbad0202/academic-research-skills) 的 revision-coach 思想（审稿意见解析为不可变 Roadmap＋作者逐条裁决）、revision_response_template（回应—行动—变化三段结构）、rebuttal-audit（只审覆盖度不代写、不代审对错）。采纳：条目不可改写、判断变化追加不抹除、每条裁决给依据、覆盖度逐条核对。阶段要求差异核对（初投／修回／录用分治）与发表阶段版本分存参考 nature-skills 的期刊阶段门做法（初投不以生产级排版拒收；录用后补齐），具体要求以目标刊当前指南为准、登记核验日期，Nature 语境值不照搬。意见解读与排序另参考 [Rebuttal-Skill](https://github.com/TobiasLee/Rebuttal-Skill)：采纳其“推断意见背后的核心关切并交作者确认、修回可行性评估、按最可能改变审稿结论排序行动、生成式辅助先核对 venue 政策”；其两段式（先分诊后成稿）与“Direct Answer→Evidence→Revision”结构和本库路线图＋回应—行动—变化同构，不另建第二套。边界与反例：三门盲序复审与检查点轮次机制不采纳（与本库“机械／实质分层、研究者终局裁决”的既定边界一致）；不代作者决定最终提交内容。边界与反例：不引入其多代理分工与裁定权；修订状态与版本账目仍由 research-execution 技能交接与修回模板唯一维护，不建第二套状态账；回复不虚构审稿人让步、不把部分回应写成完全解决。
 
@@ -235,3 +235,23 @@ R1—R5 与风格契约卡直接提炼自两篇交流报告的重写实战（诊
 **过度思考（ICML 2025）**：[Do NOT Think That Much for 2+3=?](https://icml.cc/virtual/2025/poster/45540)。长推理模型在简单问题上产生冗余推理，存在可压缩空间。采纳为按难度分级的收紧依据。边界：仅据摘要，未复现其压缩方法。
 
 **过早收敛与多样性（类比来源）**：[Premature convergence in morphology and control co-evolution](https://produccion.siia.unam.mx/Publicaciones/ProdCientif/PublicacionFrw.aspx?id=649478)。目标驱动的搜索会丢多样性，质量-多样性类方法为对抗此点而设计。采纳为"单一判据越早介入，替代路线越少"。边界与反例：演化计算结论，迁移到研究工作流属类比，不作为 LLM 行为的直接证据。
+
+## figure-craft：科研图件（2026-11-21 从 paper-writing 迁出并扩写）
+
+**迁移说明**：FIG1—FIG11 由原 paper-writing 技能的 F8—F14 迁出改写，契约、语义色族、刊印与渲染检查、多面板架构、图注最小项来自 nature-figure v2.8.0（Apache-2.0，本地只读摘编，未运行其脚本）；原"四原型"只保留排布骨架（定量网格、图像加定量、非对称混合），示意图与架构图不在本技能范围。迁移保留原边界：期刊毫米、字号与色板 hex 不作通用规则，未知填 null；AI 生图路线、后端排他约束与脚本分发不引入。
+
+**多面板与导出要点（nature-figure，2026-11-21 复核）**：[Yuan1z0825/nature-skills](https://github.com/Yuan1z0825/nature-skills) 的技能索引与 README（只读，未读其内部全部文件）。采纳：三级面板层级（总览→偏离→关系）、最终尺寸出图、SVG 保留文本节点的 rcParams 思路、渲染后文字与图形碰撞审计的存在性。改写为 FIG7、FIG10。边界与反例：不把其模板当默认，不引入其 AI 生图与脚本分发。
+
+**先剖面后选图（scipilot，MIT）**：[Haojae/scipilot-figure-skill](https://github.com/Haojae/scipilot-figure-skill)（只读仓库 README，未运行其脚本）。采纳：数据剖析先于绘图、按数据形态与论证目标选图、主动拦截常见错误（n<10 均值柱、双 Y 轴、饼图与 3D、彩虹色、一图多论点、缺字、标号错位）、出图后"程序＋读图"自检闭环、按最终尺寸出图。改写为 FIG2、FIG3、FIG5、FIG7—FIG11 与反模式清单。边界与反例：不把其九类配方当规则，不采用 plotly 交互路线与依赖栈；其"读图"只能补充视觉审读，不能替代文本提取与尺寸实测。
+
+**期刊图件规格（Nature 作者指南，2026-11-21 读取）**：[Final submission](https://www.nature.com/nature/for-authors/final-submission)。采纳：单栏 89 mm、一栏半 120—136 mm、双栏 183 mm、页深 247 mm；正文最大 7 pt、最小 5 pt、面板标号 8 pt 粗体；线宽 0.25—1 pt；照片 300—600 dpi；不转曲、不栅格化文字；RGB。用于 FIG9、FIG10 的典型值表。边界与反例：这是 Nature 单刊的现行要求，不是通用规则；投稿前必须核对目标刊当期指南与项目 submission_profile.json。
+
+**误差条规则（Cumming、Fidler、Vaux，J Cell Biol 2007）**：[Error bars in experimental biology](https://rupress.org/jcb/article-abstract/177/1/7/34602/Error-bars-in-experimental-biology)。采纳其方向：误差条必须说明表示什么、给出 n、只用于独立重复、区分 SD 与 SEM／CI、图上比较不能只看重叠。改写为 FIG4 的四问与常见误用。边界与反例：原文面向实验生物学，未复制其数值判据；本库按统计协议与目标领域调整，不把"区间重叠"简化成显著性判据。
+
+**小样本展示个体（Weissgerber 等，PLoS Biol 2015）**：[Beyond Bar and Line Graphs](https://journals.plos.org/plosbiology/article?id=10.1371%2Fjournal.pbio.1002128)。系统综述显示顶刊生理学论文多用均值柱与折线，掩盖分布与个体。采纳为 FIG5 的"小样本显示个体点、均值柱不作唯一表达"。边界与反例：不设"所有图必须点图"的硬规则；大样本且分布已知时汇总图仍可用，但须同时给区间。
+
+**十条绘图规则（Rougier、Droettboom、Bourne，PLoS Comput Biol 2014）**：[Ten Simple Rules for Better Figures](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1003833)。采纳：先明确读者与主张、不用默认设置、不堆装饰、坐标轴标注、颜色有意义、字号可读、避免不必要的三维。改写为 FIG1、FIG8、FIG9 与反模式。边界与反例：其"不要用默认设置"不等于堆样式；规则不提供具体阈值。
+
+**顺序可靠性与 HOPs（Hullman 等，PLoS ONE 2015）**：[Hypothetical Outcome Plots Outperform Error Bars and Violin Plots](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0142444)。采纳为 FIG4 的可选增强：判断顺序可靠性时可用分帧或动态表达，静态图仍须给区间。边界与反例：该结论来自特定读者实验，不构成一切场景都该用动画；投稿静态版式仍以静态图为准。
+
+**色图误用（Crameri 等，Nat Commun 2020）**：[Scientific colour maps](https://www.fabiocrameri.ch/colourmaps/) 与 The misuse of colour in science communication（DOI 10.1038/s41467-020-19160-7）。采纳：感知均匀、色盲友好、灰度可读、避免彩虹与 jet。改写为 FIG8 与反模式第 5 条。边界与反例：具体色值由项目登记，不把某一套色图设成唯一正确；定性配色的语义色族优先于色图选择。

@@ -1,0 +1,43 @@
+# 科研绘图样式示例（matplotlib）
+# 示例：全部条目默认注释，不构成通用规则；项目按目标刊与项目配置域（字体版式、图件载体）替换取值后取消注释。
+# 用法：复制为本项目样式文件，填入项目值；样式文件本地离线加载，不联网。检查以导出件为准（FIG9、FIG11）。
+
+# 图幅与导出（先定最终尺寸再画）
+# figure.figsize : 3.504, 2.362   # 示例：89 mm × 60 mm 换算（1 in = 25.4 mm）；按目标刊单双栏调整
+# figure.dpi : 150                # 示例：屏幕预览分辨率
+# savefig.dpi : 600               # 示例：位图导出分辨率；矢量图不受此项影响
+# savefig.bbox : tight            # 示例：导出裁切——会改变实际画布尺寸，须记录最终尺寸（FIG10）
+# savefig.pad_inches : 0.02       # 示例：裁切留白
+
+# 字体与字号（在最终刊印尺寸下检查，导出件实测为准）
+# font.family : sans-serif
+# font.sans-serif : Arial, Helvetica, Microsoft YaHei, SimHei, DejaVu Sans, sans-serif
+# font.size :                     # 项目值：基础字号（pt），启用前填入
+# axes.labelsize :                # 项目值：坐标标签字号
+# xtick.labelsize :               # 项目值：x 刻度字号
+# ytick.labelsize :               # 项目值：y 刻度字号
+# legend.fontsize :               # 项目值：图例字号
+# mathtext.fontset : dejavusans   # 示例：数学字体与正文族一致；上下标实际渲染缩小须实测（FIG9）
+
+# 负号与特殊字符
+# axes.unicode_minus : False      # 示例：字体不含 Unicode 负号时关闭替换，避免显示为方块
+
+# 线宽与标记（分层：轴、数据线、参考线）
+# axes.linewidth :                # 项目值：轴线宽
+# lines.linewidth :               # 项目值：数据线宽
+# lines.markersize :              # 项目值：标记大小
+# xtick.major.width :             # 项目值：刻度线宽
+# ytick.major.width :             # 项目值：刻度线宽
+
+# 轴与脊
+# axes.spines.top : False         # 示例：去上脊，按领域惯例与目标刊调整
+# axes.spines.right : False       # 示例：去右脊
+# xtick.direction : in            # 示例：刻度朝向
+# ytick.direction : in            # 示例：刻度朝向
+
+# 图例
+# legend.frameon : False          # 示例：无框图例
+
+# 导出可编辑性（FIG10）
+# svg.fonttype : none             # 示例：SVG 保留文本节点，文字仍可编辑
+# pdf.fonttype : 42               # 示例：PDF 嵌入字体而不转曲，按投稿要求登记
