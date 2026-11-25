@@ -8,6 +8,8 @@ https://github.com/larashero3-dotcom/lieflat-less-ai-tone ，改动见文末清�
 
 默认输出 Markdown 报告（与用户文稿同格式，md 标记原样保留，
 可直接复制回写作流程；`--format html` 生成单文件网页版）。
+结构：metric_rows / findings / semantic_groups / diff_blocks 先算出与格式无关的数据，
+再由 render_md / render_html 输出；两种格式内容同源，不再各写一套。
 
 用法（改动前后各跑一次 ai_tone_detect.py --json，再生成报告；建议设置 PYTHONUTF8=1）：
     python ai_tone_detect.py 原稿.md --json > 改前.json
@@ -86,379 +88,263 @@ p{margin:0 0 1.1em}
 """
 
 
+LEVELS = [("A", "机械改（模型复核误报后处理）", "tagA"),
+          ("B", "建议改（模型逐条筛选后处理）", "tagB"),
+          ("H", "人审区（默认保留，用户主动要求时再审）", "tagH"),
+          ("X", "已否决特征（实测不是 AI 味——不要改）", "tagX")]
+
+SEM_GROUPS = {"rename": "同义重命名（段级）", "cohesion": "衔接方式（段间接口）",
+              "colon": "冒号分类", "iso3": "高度同构三连"}
+# 重命名重灾 / 衔接连环（连续长度另算）/ 冒号真信号 / 同构真信号
+SEM_FLAGGED = {"2组", "3组及以上", "明确承接", "结论提示", "高度同构"}
+
+METRIC_NOTE = ("参考值=来源研究 270 对同题配对实测人类中位（通识语料，学术语料未重标定），"
+               "证据登记见仓库 SOURCES.md。")
+SEM_NOTE = ("四项在 270 对配对语料统计显著；同义重命名为单模型判据（弱一档）。"
+            "判据见本技能 references/成稿去AI味检测与语义判据.md。")
+C_LEVEL_NOTE = ("C 级（结构/节奏）见指标表，只报告不追求推到目标值；F 指纹见表内指纹行；"
+                "比喻贴切度只能人审；本轮默认保留。用户主动要求时再列出相关原句供判断。")
+
+
 def esc(s):
     return html.escape(str(s), quote=False)
 
 
-def arrow(before, after, better="low"):
-    """better: 'low'=数值低更好, 'high'=数值高更好, None=不判方向"""
+# ---------------- 数据层（与格式无关） ----------------
+
+def direction(before, after, better="low"):
+    """better: 'low'=数值低更好, 'high'=数值高更好, None=不判方向 → (css 类, 箭头)"""
     if before is None or after is None or before == after:
-        cls, mark = "flat", "→"
-    elif better == "low":
-        cls, mark = ("down", "↓") if after < before else ("up", "↑")
-    elif better == "high":
-        cls, mark = ("up", "↑") if after > before else ("down", "↓")
-    else:
-        cls, mark = "flat", "→"
-    return f'<span class="{cls}">{mark}</span>'
+        return "flat", "→"
+    if better == "low":
+        return ("down", "↓") if after < before else ("up", "↑")
+    if better == "high":
+        return ("up", "↑") if after > before else ("down", "↓")
+    return "flat", "→"
 
 
-# ---------------- 指标对比表 ----------------
+def _shown(v):
+    return v if v is not None else "—"
 
-def metric_table(d0, d1):
+
+def metric_rows(d0, d1):
     rows = []
     for key, name, better, ref in METRIC_ROWS:
-        v0 = d0["density"].get(key)
-        v1 = d1["density"].get(key)
-        rows.append(f"<tr><td>{esc(name)}</td>"
-                    f"<td>{v0 if v0 is not None else '—'}</td>"
-                    f"<td>{v1 if v1 is not None else '—'}</td>"
-                    f"<td>{arrow(v0, v1, better)}</td>"
-                    f'<td class="human">≈{ref}</td></tr>')
+        v0, v1 = d0["density"].get(key), d1["density"].get(key)
+        rows.append(dict(name=name, v0=_shown(v0), v1=_shown(v1),
+                         dir=direction(v0, v1, better), ref=f"≈{ref}", fingerprint=False))
     for key, name, better, ref in STRUCT_ROWS:
-        v0 = d0["structure"].get(key)
-        v1 = d1["structure"].get(key)
-        rows.append(f"<tr><td>{esc(name)}</td>"
-                    f"<td>{v0 if v0 is not None else '—'}</td>"
-                    f"<td>{v1 if v1 is not None else '—'}</td>"
-                    f"<td>{arrow(v0, v1, better)}</td>"
-                    f'<td class="human">{esc(ref)}</td></tr>')
+        v0, v1 = d0["structure"].get(key), d1["structure"].get(key)
+        rows.append(dict(name=name, v0=_shown(v0), v1=_shown(v1),
+                         dir=direction(v0, v1, better), ref=ref, fingerprint=False))
     for key, note in FINGERPRINT_ROWS:
-        v0 = d0["char_density"].get(key)
-        v1 = d1["char_density"].get(key)
-        rows.append(f"<tr><td>{esc(key)}<span class='small'>（指纹）</span></td>"
-                    f"<td>{v0}</td><td>{v1}</td><td>{arrow(v0, v1, None)}</td>"
-                    f'<td class="small">{esc(note)}</td></tr>')
-    return ("<table><tr><th>指标</th><th>改前</th><th>改后</th><th>变化</th>"
-            "<th>人类参考</th></tr>" + "".join(rows) + "</table>"
-            '<p class="small">↓/↑ 绿色=向人类参考方向改善，红色=恶化；指纹行不判方向。'
-            "参考值=来源研究 270 对同题配对实测人类中位（通识语料，学术语料未重标定），"
-            "证据登记见仓库 SOURCES.md。</p>")
+        v0, v1 = d0["char_density"].get(key), d1["char_density"].get(key)
+        rows.append(dict(name=key, v0=v0, v1=v1, dir=direction(v0, v1, None),
+                         ref=note, fingerprint=True))
+    return rows
 
 
-# ---------------- 分级问题清单 ----------------
-
-def findings_section(d):
+def findings(d):
+    """[(级别, 标题, css 类, [(名称, 命中列表)])]，只含有命中的级别。"""
     out = []
-    for lvl, title, cls in [("A", "机械改（模型复核误报后处理）", "tagA"),
-                            ("B", "建议改（模型逐条筛选后处理）", "tagB"),
-                            ("H", "人审区（默认保留，用户主动要求时再审）", "tagH"),
-                            ("X", "已否决特征（实测不是 AI 味——不要改）", "tagX")]:
-        names = [nm for lv, nm, *_ in REGEX_HITS if lv == lvl]
-        rows = []
-        for nm in names:
-            hs = d["hits"].get(nm, [])
-            if not hs:
-                continue
-            rows.append(f"<div><strong>{esc(nm)}</strong> {len(hs)} 处")
-            rows.append("<details><summary class='small'>展开命中</summary>")
-            for h in hs[:20]:
-                rows.append(f"<p class='small'>{esc(h['file'])}:{h['line']}　"
-                            f"{esc(h['excerpt'])}</p>")
-            rows.append("</details></div>")
-        if rows:
-            out.append(f'<h3><span class="{cls}">{lvl}</span> {esc(title)}</h3>')
-            out.extend(rows)
-    return "\n".join(out)
+    for lvl, title, cls in LEVELS:
+        items = [(nm, d["hits"].get(nm, [])) for lv, nm, *_ in REGEX_HITS if lv == lvl]
+        items = [(nm, hs) for nm, hs in items if hs]
+        if items:
+            out.append((lvl, title, cls, items))
+    return out
 
 
-def semantic_section(sem):
-    """语义层判读结果：四项各自小结 + 明细折叠。"""
-    if not sem:
-        return ""
-    out = ['<h2>语义层判读（会话内模型按封闭判据逐条判断）</h2>',
-           '<p class="small">四项在 270 对配对语料统计显著；同义重命名为单模型判据（弱一档）。'
-           '判据见本技能 references/成稿去AI味检测与语义判据.md。</p>']
-    groups = {"rename": "同义重命名（段级）", "cohesion": "衔接方式（段间接口）",
-              "colon": "冒号分类", "iso3": "高度同构三连"}
-    for key, title in groups.items():
-        items = [c for c in sem.get(key, []) if c.get("label")]
+def _longest_chain(items):
+    best = cur = 0
+    for c in items:
+        cur = cur + 1 if c.get("label") == "明确承接" else 0
+        best = max(best, cur)
+    return best
+
+
+def semantic_groups(sem):
+    """语义层判读：每组的计数、衔接最长连环与需展示的条目。"""
+    groups = []
+    for key, title in SEM_GROUPS.items():
+        items = [c for c in (sem or {}).get(key, []) if c.get("label")]
         if not items:
             continue
         counts = {}
         for c in items:
             counts[c["label"]] = counts.get(c["label"], 0) + 1
-        stats = "，".join(f"{esc(k)} {v}" for k, v in sorted(counts.items(), key=lambda x: -x[1]))
-        out.append(f"<h3>{esc(title)} <span class='small'>{len(items)} 条：{stats}</span></h3>")
-        flagged = [c for c in items if c.get("label") in {
-            "2组", "3组及以上",                      # 重命名重灾
-            "明确承接",                              # 衔接连环（连续长度另算）
-            "结论提示",                              # 冒号真信号
-            "高度同构",                              # 同构真信号
-        }]
-        # 衔接连环长度
-        chain_note = ""
-        if key == "cohesion":
-            labels = [c.get("label") for c in items]
-            best = cur = 0
-            for lb in labels:
-                cur = cur + 1 if lb == "明确承接" else 0
-                best = max(best, cur)
-            chain_note = f"（最长连环 {best} 个接口；≥6 为报告门槛，人类中位 2）"
-            if best >= 6:
-                chain_note = f'<span class="up">⚠ {chain_note}</span>'
-        if key == "cohesion" and chain_note:
-            out.append(f"<p>{chain_note}</p>")
-        for c in flagged[:15]:
+        flagged = []
+        for c in [c for c in items if c.get("label") in SEM_FLAGGED][:15]:
             text = c.get("para") or " → ".join(filter(None, [
                 c.get("prev_tail"), c.get("next_head")])) or c.get("sentence") \
                 or "／".join(c.get("sents") or [])
-            conf = c.get("confidence", "")
-            reason = c.get("reason", "")
-            out.append(f"<p class='small'><strong>{esc(c['label'])}</strong>"
-                       f"（置信:{esc(conf)}）{esc(c.get('file',''))}:{c.get('line','')}　"
-                       f"{esc(text[:110])}"
-                       + (f"<br>理由：{esc(reason[:100])}" if reason else "") + "</p>")
-    return "\n".join(out)
+            flagged.append(dict(label=c["label"], conf=c.get("confidence", ""),
+                                loc=f"{c.get('file', '')}:{c.get('line', '')}",
+                                text=text[:110], reason=c.get("reason", "")[:100]))
+        groups.append(dict(title=title, n=len(items),
+                           counts=sorted(counts.items(), key=lambda x: -x[1]),
+                           chain=_longest_chain(items) if key == "cohesion" else None,
+                           flagged=flagged))
+    return groups
 
-
-# ---------------- 标红 diff ----------------
 
 def para_split(text):
     """按空行分段，保留原文形态（不去 markdown 标记）。"""
-    paras = [p for p in re.split(r"\n\s*\n", text) if p.strip()]
-    return paras
+    return [p for p in re.split(r"\n\s*\n", text) if p.strip()]
 
 
-def inline_diff(a, b):
-    """段内字符级 diff：相同=黑，删=灰删除线，改/增=红。"""
-    sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
-    out = []
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+def inline_segments(a, b):
+    """段内字符级 diff → [(op, 文本)]，op ∈ equal/del/ins/chg（chg=替换后的新文字）。"""
+    segs = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
         if tag == "equal":
-            out.append(esc(a[i1:i2]))
+            segs.append(("equal", a[i1:i2]))
         elif tag == "delete":
-            out.append(f'<span class="del">{esc(a[i1:i2])}</span>')
+            segs.append(("del", a[i1:i2]))
         elif tag == "insert":
-            out.append(f'<span class="ins">{esc(b[j1:j2])}</span>')
-        elif tag == "replace":
-            out.append(f'<span class="del">{esc(a[i1:i2])}</span>'
-                       f'<span class="chg">{esc(b[j1:j2])}</span>')
-    return "".join(out)
+            segs.append(("ins", b[j1:j2]))
+        else:
+            segs += [("del", a[i1:i2]), ("chg", b[j1:j2])]
+    return segs
 
 
-def diff_section(text0, text1):
+def diff_blocks(text0, text1):
+    """段级 diff → 段落列表，每段为 [(op, 文本)]；段数不等时多出的段落单独标。"""
     p0, p1 = para_split(text0), para_split(text1)
-    sm = difflib.SequenceMatcher(None, p0, p1, autojunk=False)
-    body = []
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+    blocks = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, p0, p1, autojunk=False).get_opcodes():
         if tag == "equal":
-            for p in p0[i1:i2]:
-                body.append(f"<p>{esc(p)}</p>")
+            blocks += [[("equal", p)] for p in p0[i1:i2]]
         elif tag == "delete":
-            for p in p0[i1:i2]:
-                body.append(f'<p><span class="del">{esc(p)}</span></p>')
+            blocks += [[("del", p)] for p in p0[i1:i2]]
         elif tag == "insert":
-            for p in p1[j1:j2]:
-                body.append(f'<p><span class="ins">{esc(p)}</span></p>')
-        elif tag == "replace":
-            for pa, pb in zip(p0[i1:i2], p1[j1:j2]):
-                body.append(f"<p>{inline_diff(pa, pb)}</p>")
-            # 段数不等时多出的段落单独标
-            for p in p0[i1 + (j2 - j1):i2]:
-                body.append(f'<p><span class="del">{esc(p)}</span></p>')
-            for p in p1[j1 + (i2 - i1):j2]:
-                body.append(f'<p><span class="ins">{esc(p)}</span></p>')
-    return "\n".join(body)
+            blocks += [[("ins", p)] for p in p1[j1:j2]]
+        else:
+            blocks += [inline_segments(pa, pb) for pa, pb in zip(p0[i1:i2], p1[j1:j2])]
+            blocks += [[("del", p)] for p in p0[i1 + (j2 - j1):i2]]
+            blocks += [[("ins", p)] for p in p1[j1 + (i2 - i1):j2]]
+    return blocks
 
 
-# ---------------- Markdown 报告 ----------------
+# ---------------- Markdown 渲染 ----------------
+# 对照用 <del>/<ins> 行内 HTML 而非 ~~/**：改动常落在原有 **加粗**、## 标题等标记内部，
+# ~~/** 会与原文标记配对错乱；<del>/<ins> 与任何 md 标记零冲突，常见预览器均正常渲染。
 
-def arrow_md(before, after, better="low"):
-    if before is None or after is None or before == after:
-        return "→"
-    if better == "low":
-        return "↓" if after < before else "↑"
-    if better == "high":
-        return "↑" if after > before else "↓"
-    return "→"
+MD_TAG = {"equal": "{}", "del": "<del>{}</del>", "ins": "<ins>{}</ins>", "chg": "<ins>{}</ins>"}
 
 
-def metric_table_md(d0, d1):
-    rows = ["| 指标 | 改前 | 改后 | 变化 | 人类参考 |", "|---|---|---|---|---|"]
-    for key, name, better, ref in METRIC_ROWS:
-        v0 = d0["density"].get(key)
-        v1 = d1["density"].get(key)
-        rows.append(f"| {name} | {v0 if v0 is not None else '—'} | "
-                    f"{v1 if v1 is not None else '—'} | {arrow_md(v0, v1, better)} | ≈{ref} |")
-    for key, name, better, ref in STRUCT_ROWS:
-        v0 = d0["structure"].get(key)
-        v1 = d1["structure"].get(key)
-        rows.append(f"| {name} | {v0 if v0 is not None else '—'} | "
-                    f"{v1 if v1 is not None else '—'} | {arrow_md(v0, v1, better)} | {ref} |")
-    for key, note in FINGERPRINT_ROWS:
-        v0 = d0["char_density"].get(key)
-        v1 = d1["char_density"].get(key)
-        rows.append(f"| {key}（指纹） | {v0} | {v1} | {arrow_md(v0, v1, None)} | {note} |")
-    rows.append("")
-    rows.append("↓/↑ = 向人类参考方向改善/恶化；指纹行不判方向。"
-                "参考值=来源研究 270 对同题配对实测人类中位（通识语料，学术语料未重标定），"
-                "证据登记见仓库 SOURCES.md。")
-    return "\n".join(rows)
-
-
-def findings_section_md(d):
-    out = []
-    for lvl, title in [("A", "机械改（模型复核误报后处理）"),
-                       ("B", "建议改（模型逐条筛选后处理）"),
-                       ("H", "人审区（默认保留，用户主动要求时再审）"),
-                       ("X", "已否决特征（实测不是 AI 味——不要改）")]:
-        names = [nm for lv, nm, *_ in REGEX_HITS if lv == lvl]
-        blocks = []
-        for nm in names:
-            hs = d["hits"].get(nm, [])
-            if not hs:
-                continue
-            lines = [f"**{nm}** {len(hs)} 处", ""]
-            for h in hs[:20]:
-                lines.append(f"- `{h['file']}:{h['line']}`　{h['excerpt']}")
-            lines.append("")
-            blocks.append("\n".join(lines))
-        if blocks:
-            out.append(f"### {lvl} 级 · {title}\n")
-            out.extend(blocks)
-    return "\n".join(out)
-
-
-def semantic_section_md(sem):
+def _md_semantic(sem):
     if not sem:
-        return ""
-    out = ["## 语义层判读（会话内模型按封闭判据逐条判断）", "",
-           "四项在 270 对配对语料统计显著；同义重命名为单模型判据（弱一档）。"
-           "判据见本技能 references/成稿去AI味检测与语义判据.md。", ""]
-    groups = {"rename": "同义重命名（段级）", "cohesion": "衔接方式（段间接口）",
-              "colon": "冒号分类", "iso3": "高度同构三连"}
-    for key, title in groups.items():
-        items = [c for c in sem.get(key, []) if c.get("label")]
-        if not items:
-            continue
-        counts = {}
-        for c in items:
-            counts[c["label"]] = counts.get(c["label"], 0) + 1
-        stats = "，".join(f"{k} {v}" for k, v in sorted(counts.items(), key=lambda x: -x[1]))
-        out.append(f"### {title}（{len(items)} 条：{stats}）")
-        out.append("")
-        if key == "cohesion":
-            labels = [c.get("label") for c in items]
-            best = cur = 0
-            for lb in labels:
-                cur = cur + 1 if lb == "明确承接" else 0
-                best = max(best, cur)
-            note = f"最长连环 {best} 个接口；≥6 为报告门槛，人类中位 2。"
-            if best >= 6:
-                note = f"⚠ {note}"
-            out.append(note)
-            out.append("")
-        flagged = [c for c in items if c.get("label") in {
-            "2组", "3组及以上", "明确承接", "结论提示", "高度同构",
-        }]
-        for c in flagged[:15]:
-            text = c.get("para") or " → ".join(filter(None, [
-                c.get("prev_tail"), c.get("next_head")])) or c.get("sentence") \
-                or "／".join(c.get("sents") or [])
-            conf = c.get("confidence", "")
-            reason = c.get("reason", "")
-            out.append(f"- **{c['label']}**（置信:{conf}）`{c.get('file','')}:{c.get('line','')}`　{text[:110]}"
-                       + (f"　理由：{reason[:100]}" if reason else ""))
-        out.append("")
-    return "\n".join(out)
+        return []
+    lines = ["## 语义层判读（会话内模型按封闭判据逐条判断）", "", SEM_NOTE, ""]
+    for g in semantic_groups(sem):
+        stats = "，".join(f"{k} {v}" for k, v in g["counts"])
+        lines += [f"### {g['title']}（{g['n']} 条：{stats}）", ""]
+        if g["chain"] is not None:
+            note = f"最长连环 {g['chain']} 个接口；≥6 为报告门槛，人类中位 2。"
+            lines += [f"⚠ {note}" if g["chain"] >= 6 else note, ""]
+        for c in g["flagged"]:
+            lines.append(f"- **{c['label']}**（置信:{c['conf']}）`{c['loc']}`　{c['text']}"
+                         + (f"　理由：{c['reason']}" if c["reason"] else ""))
+        lines.append("")
+    return lines
 
 
-def inline_diff_md(a, b):
-    """段内字符级 diff 的 md 版：<del> = 原文，<ins> = 新文字。
+def render_md(t0, t1, d0, d1, sem, name0, name1):
+    table = ["| 指标 | 改前 | 改后 | 变化 | 人类参考 |", "|---|---|---|---|---|"]
+    for r in metric_rows(d0, d1):
+        label = f"{r['name']}（指纹）" if r["fingerprint"] else r["name"]
+        table.append(f"| {label} | {r['v0']} | {r['v1']} | {r['dir'][1]} | {r['ref']} |")
+    table += ["", "↓/↑ = 向人类参考方向改善/恶化；指纹行不判方向。" + METRIC_NOTE]
 
-    用 HTML 行内标签而非 ~~/**：改动经常落在原有 **加粗**、## 标题等
-    md 标记内部或旁边，~~/** 会跟原文标记配对错乱（嵌套碎掉）；
-    <del>/<ins> 是 md 合法行内 HTML，跟任何 md 标记零字符冲突，
-    Typora/VS Code/GitHub 预览均正常渲染（删除线/下划线）。
-    """
-    sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
-    out = []
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
-        if tag == "equal":
-            out.append(a[i1:i2])
-        elif tag == "delete":
-            out.append(f"<del>{a[i1:i2]}</del>")
-        elif tag == "insert":
-            out.append(f"<ins>{b[j1:j2]}</ins>")
-        else:  # replace
-            out.append(f"<del>{a[i1:i2]}</del><ins>{b[j1:j2]}</ins>")
-    return "".join(out)
+    found = []
+    for lvl, title, _, items in findings(d0):
+        found.append(f"### {lvl} 级 · {title}\n")
+        for nm, hs in items:
+            lines = [f"**{nm}** {len(hs)} 处", ""]
+            lines += [f"- `{h['file']}:{h['line']}`　{h['excerpt']}" for h in hs[:20]]
+            found.append("\n".join(lines + [""]))
 
-
-def diff_section_md(text0, text1):
-    p0, p1 = para_split(text0), para_split(text1)
-    sm = difflib.SequenceMatcher(None, p0, p1, autojunk=False)
-    body = []
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
-        if tag == "equal":
-            body.extend(p0[i1:i2])
-        elif tag == "delete":
-            body.extend(f"<del>{p}</del>" for p in p0[i1:i2])
-        elif tag == "insert":
-            body.extend(f"<ins>{p}</ins>" for p in p1[j1:j2])
-        elif tag == "replace":
-            for pa, pb in zip(p0[i1:i2], p1[j1:j2]):
-                body.append(inline_diff_md(pa, pb))
-            for p in p0[i1 + (j2 - j1):i2]:
-                body.append(f"<del>{p}</del>")
-            for p in p1[j1 + (i2 - i1):j2]:
-                body.append(f"<ins>{p}</ins>")
-    return "\n\n".join(body)
-
-
-def build_report_md(t0, t1, d0, d1, sem, name0, name1):
-    parts = [
-        "# 成稿去AI味 · 前后对比报告",
-        "",
-        f"{name0} → {name1}",
-        "",
-        "标记约定：<del>删除线</del> = 被改掉/删掉的原文；<ins>下划线</ins> = 改后的新文字；"
-        "指标表 ↓/↑ = 相对人类参考的改善/恶化。",
-        "",
-        "## 一、指标前后对比",
-        "",
-        metric_table_md(d0, d1),
-    ]
-    sem_md = semantic_section_md(sem)
-    if sem_md:
-        parts.append(sem_md)
-    parts.extend([
-        "## 二、分级问题清单（改前检测）",
-        "",
-        findings_section_md(d0),
-        "C 级（结构/节奏）见指标表，只报告不追求推到目标值；F 指纹见表内指纹行；"
-        "比喻贴切度只能人审；本轮默认保留。用户主动要求时再列出相关原句供判断。",
-        "",
-        "## 三、前后对照（改后稿全文，改动处标记）",
-        "",
-        diff_section_md(t0, t1),
-    ])
+    diff = ["".join(MD_TAG[op].format(t) for op, t in blk) for blk in diff_blocks(t0, t1)]
+    parts = ["# 成稿去AI味 · 前后对比报告", "", f"{name0} → {name1}", "",
+             "标记约定：<del>删除线</del> = 被改掉/删掉的原文；<ins>下划线</ins> = 改后的新文字；"
+             "指标表 ↓/↑ = 相对人类参考的改善/恶化。", "",
+             "## 一、指标前后对比", "", "\n".join(table)]
+    sem_lines = _md_semantic(sem)
+    if sem_lines:
+        parts.append("\n".join(sem_lines))
+    parts += ["## 二、分级问题清单（改前检测）", "", "\n".join(found), C_LEVEL_NOTE, "",
+              "## 三、前后对照（改后稿全文，改动处标记）", "", "\n\n".join(diff)]
     return "\n\n".join(parts)
 
 
-# ---------------- 组装 ----------------
+# ---------------- HTML 渲染 ----------------
 
-def build_report(t0, t1, d0, d1, sem, name0, name1):
-    parts = [
-        "<!DOCTYPE html><html><head><meta charset=\"utf-8\">",
-        f"<title>成稿去AI味报告 · {esc(name0)}</title><style>{CSS}</style></head><body>",
-        f"<h1>成稿去AI味 · 前后对比报告</h1>",
-        f'<p class="small">{esc(name0)} → {esc(name1)}</p>',
-        '<div class="legend">图例：<span class="chg">红色</span> = 改后的新文字；'
-        '<span class="del">灰色删除线</span> = 被改掉/删掉的原文；'
-        '指标表 ↓/↑ = 相对人类参考的改善/恶化。</div>',
-        "<h2>一、指标前后对比</h2>",
-        metric_table(d0, d1),
-        semantic_section(sem),
-        "<h2>二、分级问题清单（改前检测）</h2>",
-        findings_section(d0),
-        '<p class="small">C 级（结构/节奏）见指标表，只报告不追求推到目标值；F 指纹见表内指纹行；'
-        "比喻贴切度只能人审；本轮默认保留。用户主动要求时再列出相关原句供判断。</p>",
-        "<h2>三、标红前后对照</h2>",
-        diff_section(t0, t1),
-        "</body></html>",
-    ]
+HTML_TAG = {"equal": "{}", "del": '<span class="del">{}</span>',
+            "ins": '<span class="ins">{}</span>', "chg": '<span class="chg">{}</span>'}
+
+
+def _html_table(d0, d1):
+    rows = []
+    for r in metric_rows(d0, d1):
+        arrow = f'<span class="{r["dir"][0]}">{r["dir"][1]}</span>'
+        if r["fingerprint"]:
+            rows.append(f"<tr><td>{esc(r['name'])}<span class='small'>（指纹）</span></td>"
+                        f"<td>{r['v0']}</td><td>{r['v1']}</td><td>{arrow}</td>"
+                        f'<td class="small">{esc(r["ref"])}</td></tr>')
+        else:
+            rows.append(f"<tr><td>{esc(r['name'])}</td><td>{r['v0']}</td><td>{r['v1']}</td>"
+                        f'<td>{arrow}</td><td class="human">{esc(r["ref"])}</td></tr>')
+    return ("<table><tr><th>指标</th><th>改前</th><th>改后</th><th>变化</th>"
+            "<th>人类参考</th></tr>" + "".join(rows) + "</table>"
+            '<p class="small">↓/↑ 绿色=向人类参考方向改善，红色=恶化；指纹行不判方向。'
+            + METRIC_NOTE + "</p>")
+
+
+def _html_semantic(sem):
+    if not sem:
+        return ""
+    out = ["<h2>语义层判读（会话内模型按封闭判据逐条判断）</h2>", f'<p class="small">{SEM_NOTE}</p>']
+    for g in semantic_groups(sem):
+        stats = "，".join(f"{esc(k)} {v}" for k, v in g["counts"])
+        out.append(f"<h3>{esc(g['title'])} <span class='small'>{g['n']} 条：{stats}</span></h3>")
+        if g["chain"] is not None:
+            note = f"（最长连环 {g['chain']} 个接口；≥6 为报告门槛，人类中位 2）"
+            out.append(f'<p><span class="up">⚠ {note}</span></p>' if g["chain"] >= 6 else f"<p>{note}</p>")
+        for c in g["flagged"]:
+            out.append(f"<p class='small'><strong>{esc(c['label'])}</strong>"
+                       f"（置信:{esc(c['conf'])}）{esc(c['loc'])}　{esc(c['text'])}"
+                       + (f"<br>理由：{esc(c['reason'])}" if c["reason"] else "") + "</p>")
+    return "\n".join(out)
+
+
+def _html_findings(d):
+    out = []
+    for lvl, title, cls, items in findings(d):
+        out.append(f'<h3><span class="{cls}">{lvl}</span> {esc(title)}</h3>')
+        for nm, hs in items:
+            out += [f"<div><strong>{esc(nm)}</strong> {len(hs)} 处",
+                    "<details><summary class='small'>展开命中</summary>"]
+            out += [f"<p class='small'>{esc(h['file'])}:{h['line']}　{esc(h['excerpt'])}</p>"
+                    for h in hs[:20]]
+            out.append("</details></div>")
+    return "\n".join(out)
+
+
+def render_html(t0, t1, d0, d1, sem, name0, name1):
+    diff = ["<p>" + "".join(HTML_TAG[op].format(esc(t)) for op, t in blk) + "</p>"
+            for blk in diff_blocks(t0, t1)]
+    parts = ["<!DOCTYPE html><html><head><meta charset=\"utf-8\">",
+             f"<title>成稿去AI味报告 · {esc(name0)}</title><style>{CSS}</style></head><body>",
+             "<h1>成稿去AI味 · 前后对比报告</h1>",
+             f'<p class="small">{esc(name0)} → {esc(name1)}</p>',
+             '<div class="legend">图例：<span class="chg">红色</span> = 改后的新文字；'
+             '<span class="del">灰色删除线</span> = 被改掉/删掉的原文；'
+             '指标表 ↓/↑ = 相对人类参考的改善/恶化。</div>',
+             "<h2>一、指标前后对比</h2>", _html_table(d0, d1), _html_semantic(sem),
+             "<h2>二、分级问题清单（改前检测）</h2>", _html_findings(d0),
+             f'<p class="small">{C_LEVEL_NOTE}</p>',
+             "<h2>三、标红前后对照</h2>", "\n".join(diff), "</body></html>"]
     return "\n".join(parts)
 
 
@@ -485,9 +371,9 @@ def main():
 
     out = args.out or f"去AI味对比报告.{args.format}"
     if args.format == "md":
-        page = build_report_md(t0, t1, d0, d1, sem, args.before, args.after)
+        page = render_md(t0, t1, d0, d1, sem, args.before, args.after)
     else:
-        page = build_report(t0, t1, d0, d1, sem, args.before, args.after)
+        page = render_html(t0, t1, d0, d1, sem, args.before, args.after)
     Path(out).write_text(page, encoding="utf-8")
     n_han = lambda t: len(re.findall(r"[一-鿿]", t))
     print(f"报告 → {out}（改前 {n_han(t0)} 字 / 改后 {n_han(t1)} 字，"
@@ -503,4 +389,5 @@ if __name__ == "__main__":
 # references/ 与仓库 SOURCES.md；报告标题与说明改为本库口径（C级不追求目标值、
 # 指纹不反推模型）；修正指标表方向映射（来源版 better 字段中文"低"与 arrow 函数
 # 的 "low" 不匹配导致箭头恒为平，结构 CV 类按证据不判方向）；读取编码兼容 BOM。
-# diff、指标汇总与语义判读汇总逻辑未改。
+# diff、指标汇总与语义判读汇总逻辑未改；2026-11-25 重构为一份数据层 + md/html 两个渲染器，
+# 以改前改后、有无语义判读四种组合核对输出逐字节不变。

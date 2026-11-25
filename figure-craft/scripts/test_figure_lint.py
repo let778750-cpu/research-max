@@ -127,8 +127,10 @@ class FigureLintTest(unittest.TestCase):
         document.save(path)
         document.close()
         result = lint_file(path, width_mm=89)
-        self.assertEqual(result["verdict"], 1)
         self.assertIn("画布尺寸", self.checks(result))
+        # PyMuPDF 默认 Helvetica 是未嵌入的 base-14 字体，新版按字体嵌入判失败
+        self.assertIn("字体嵌入", self.checks(result))
+        self.assertEqual(result["verdict"], 2)
 
     def test_11_missing_file_raises(self):
         with self.assertRaises(FileNotFoundError):

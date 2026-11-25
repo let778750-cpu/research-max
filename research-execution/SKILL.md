@@ -11,15 +11,16 @@ description: 用于研究方案落地与全程推进：G0—G9 阶段关卡、�
 |---|---|
 | [references/](references/) | 规则全文：流程与关卡（G0—G9）、数据准入、方案落地、证据反馈、协作接续、实验复现、统计诊断、归档复用 |
 | [templates/](templates/) | 空白模板：数据与划分卡、任务与验收、实验协议与冻结单（含探索记录）、主张与证据表、交接与修回、项目骨架 |
-| [scripts/](scripts/) | research_infra.py 本地检查工具（init/check/board/hash/basis/snapshot/verify）及其单元测试；只用本地文件，不联网、不调用模型、不付费 |
+| [scripts/](scripts/) | research_infra.py（init/check/board/hash/basis/snapshot/verify）、markdown_tasks.py（Markdown 任务只读解析）、module_groups.py（可选模块分组检查）及其单元测试；只用本地文件，不联网、不调用模型、不付费 |
 
-## 可选执行方式
+## 可选执行方式（只在用户指定具体任务时启用）
 
-仅当用户指定具体任务采用跨 Harness 协作时，读取[跨Harness任务执行](references/跨Harness任务执行.md)。任务长度、研究类型、项目文件和旧记录不触发派发；讨论、普通执行和查询继续按当前任务正常处理。本技能仍可按需发现，不因该模式改为只能显式调用。桥接安装与CLI见仓库顶层 integrations/claude-code，先核对真实授权及任务范围。
+| 方式 | 权威规则 | 空白模板 | 运行组件 |
+|---|---|---|---|
+| 跨 Harness：主持会话派发、执行端完成、返回后审核；也可只交叉核查已完成模块 | [跨Harness任务执行](references/跨Harness任务执行.md) | [跨Harness交接](templates/跨Harness交接.md)（含已有项目接入提示） | 仓库顶层 integrations/claude-code |
+| GitHub 过程记录：一个派生总览 Issue 加模块 PR，复用既有审核，授权内自动合并 | [GitHub模块记录](references/GitHub模块记录.md) | [GitHub记录接入](templates/GitHub记录接入.md) | 仓库顶层 integrations/github |
 
-该模式支持在已有项目中选择继续执行或仅交叉核查已完成模块；默认一次主审、必要的局部回验，审核意见的快速核实合并进修回，不固定增加第三轮。具体规则与[接入模板](templates/现有项目跨Harness接入.md)按需读取。
-
-用户指定任务采用GitHub记录并开始执行时，另读[GitHub模块记录](references/GitHub模块记录.md)及[空白接入模板](templates/GitHub记录接入.md)。用一个派生总览与模块PR记录推进，复用既有审核，通过后按授权自动合并；不因计划确认、普通执行或加载技能而推送。该能力独立于跨Harness，具体Git/GitHub CLI接口由库顶层integrations/github维护。
+任务长度、研究类型、项目文件和旧记录都不触发这两种方式；计划确认、普通执行或加载技能不等于派发或推送授权。两者相互独立，任务状态始终只在 Markdown 维护。
 
 ## 规则地图
 
@@ -33,6 +34,8 @@ description: 用于研究方案落地与全程推进：G0—G9 阶段关卡、�
 | 实验怎么设计、运行和冻结 | [实验运行与复现](references/实验运行与复现.md) | 原理先可检验、强基线与机制比较、最小检查→开发比较→目标条件三层次、小试定规模、冻结最小内容、正式运行与恢复 |
 | 结果怎么读、错了怎么查 | [统计评价与结果诊断](references/统计评价与结果诊断.md) | 分母先行、同分定位顺序、统计推断与外推、统计报告完整性清单、从数字到领域解释 |
 | 产物怎么归档、经验怎么复用 | [归档与复用](references/归档与复用.md) | 归档清单与哈希绑定、发表阶段版本分存、跨环境复现、经验复用三要素 |
+| 任务 Markdown 的固定字段与工具读取格式 | [Markdown任务格式](references/Markdown任务格式.md) | 任务卡字段、回执、hash/basis/board、可选分组字段 |
+| 指定任务的跨 Harness 执行与 GitHub 记录 | 见上节"可选执行方式" | — |
 
 ### 各文件一句话要求
 

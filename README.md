@@ -1,59 +1,55 @@
 # research-max：科研全流程技能集合
 
-七个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库为**规则唯一权威源**，完全自包含、不依赖任何外部方法库。分发以整仓为单位。
+七个自包含技能，供研究者与其 AI 助手在科研各环节按需加载。本仓库是规则唯一权威源，不依赖外部方法库，以整仓分发。
 
-独立工具：Zotero 中文对照（原 integrations/zotero-bilingual）已独立为公开项目 [transfer-plus](https://github.com/let778750-cpu/transfer-plus)，0.4.x 起以该仓库为唯一权威，本仓库不再维护其源码。
-
-每个技能是一套可独立加载的规则集，按它解决的问题选用；覆盖列说明该技能管什么、覆盖到哪，规则编号只在技能内部使用：
-
-| 技能 | 覆盖 | 入口 |
+| 技能 | 解决什么问题 | 入口 |
 |---|---|---|
-| research-topic | 选题与调研：四步法、问题合同与最近邻反证、近邻命中的处置、深度调研与文献综合 D1—D8、论文精读 P1—P9 | [research-topic/SKILL.md](research-topic/SKILL.md) |
-| research-execution | 研究执行：G0—G9 流程关卡、数据准入、Markdown 计划拆分与模块状态、证据反馈、实验层次与冻结、统计分析、归档复用、项目配置与检查工具 | [research-execution/SKILL.md](research-execution/SKILL.md) |
-| paper-writing | 论文写作全链路：W1—W10 逐章、M 公式引用、F1—F7 图表版式、A 附录、投稿核对与审稿修回 | [paper-writing/SKILL.md](paper-writing/SKILL.md) |
-| figure-craft | 科研图件：把数据与实验结果做成可发表的数据图——图件契约、数据剖面与图型决策、误差与不确定性表达、分布与个体点、多面板与配色、刊印尺寸、导出与出图自检、图注统计最小项；含离线检查工具 | [figure-craft/SKILL.md](figure-craft/SKILL.md) |
-| report-writing | 非论文文体 R1—R5：进展报告、记录、评审意见 | [report-writing/SKILL.md](report-writing/SKILL.md) |
-| turn-report | 逐轮汇报：把每轮任务结果讲成能直接决策的一段话——先给判断与可用性，每条结论带可查证据，局限与未做合并交代，措辞按证据强度分级，去掉模板腔与空泛词，篇幅随判断量，缩写首次出现给全称 | [turn-report/SKILL.md](turn-report/SKILL.md) |
-| effort-guard | 投入与止损：多步工作开工前算清时间、调用与人工复核的成本；先摆可比较的路线再收敛；同一失败两次停手；继续、收缩还是停用信息闸与成本闸判断；重写先计价；汇报带成本账。探索期按信息增益停，成本不否决发散 | [effort-guard/SKILL.md](effort-guard/SKILL.md) |
+| research-topic | 选题与调研：从未知出发展开或聚焦问题，做最近邻反证、深度检索与文献综合、单篇精读与核验 | [SKILL.md](research-topic/SKILL.md) |
+| research-execution | 研究执行：流程关卡、数据准入、计划拆分与模块状态、实验层次与冻结、统计分析、归档复用；含项目初始化与检查工具 | [SKILL.md](research-execution/SKILL.md) |
+| paper-writing | 论文写作全链路：逐章写法、公式与引用、表格与图的科学角色、附录、投稿核对、审稿修回、去 AI 味 | [SKILL.md](paper-writing/SKILL.md) |
+| figure-craft | 科研图件：数据图（契约、选型、误差与分布、多面板、配色、期刊版式、导出与自检）、领域图型（收敛、Pareto、性能剖面、临界差、甘特、轨迹）、示意图与架构图、LaTeX 字体一致出图；含样式、配方与离线检查工具 | [SKILL.md](figure-craft/SKILL.md) |
+| report-writing | 非论文文体：进展报告、工作记录、评审意见 | [SKILL.md](report-writing/SKILL.md) |
+| turn-report | 逐轮汇报：先给判断与可用性，结论带证据锚点，边界集中交代，措辞随证据强度，缩写首现给全称；含机械自检 | [SKILL.md](turn-report/SKILL.md) |
+| effort-guard | 投入与止损：开工前算成本，先摆可比路线，同一失败两次停手，用信息闸与成本闸决定继续、收缩或停，汇报带成本账 | [SKILL.md](effort-guard/SKILL.md) |
 
-使用方式：按当前任务从对应 SKILL.md 进入；技能内按"规则地图"只读需要的文件。新研究项目可用 research-execution 的项目骨架或 `scripts/research_infra.py init` 起步。维护约定见 [AGENTS.md](AGENTS.md)；各规则的来源、适用边界与反例见 [SOURCES.md](SOURCES.md)。
+用法：按当前任务进入对应 SKILL.md，再按其“规则地图”只读需要的文件。新研究项目可用 research-execution 的项目骨架或 `scripts/research_infra.py init` 起步。
+
+| 仓库级文件 | 内容 |
+|---|---|
+| [AGENTS.md](AGENTS.md) | research-max 自身的维护约定（不适用于你的项目） |
+| [SOURCES.md](SOURCES.md) | 各规则的来源、适用边界与反例 |
+| [CHANGELOG.md](CHANGELOG.md) | 迁移说明、实施验证记录与提交史 |
+| [examples/领域示例.md](examples/领域示例.md) | 航空航天与观测调度领域的可选示例，按技能分节；正文规则保持领域中性 |
+| [project-agents/](project-agents/AGENTS.md) | 项目侧 AGENTS.md 模板与逐节解读 |
 
 ## 项目侧 AGENTS.md：与技能搭配
 
-技能只规定方法，不知道你的项目状态、数据位置和验收口径。把 [project-agents/AGENTS.md](project-agents/AGENTS.md) 复制到项目根目录改名为 `AGENTS.md`，它就补齐这三件事，并把"什么任务读哪个技能"写成路由。常驻文件只放原则与路由（建议 80—120 行），方法细则留在技能内，不复制。
-
-各节与技能的对应关系：
+技能只规定方法，不知道项目状态、数据位置和验收口径。把 [project-agents/AGENTS.md](project-agents/AGENTS.md) 复制到项目根目录、改名为 `AGENTS.md` 并替换占位符，它补齐这三件事，并把“什么任务读哪个技能”写成路由。常驻文件只放原则与路由（建议 80—120 行），方法细则留在技能内。
 
 | 项目 AGENTS 的节 | 负责什么 | 细则来自 |
 |---|---|---|
-| 项目入口与规则分工 | 读哪几个文件；任务状态唯一入口；代码、文献、案例、归档各放哪；沿用哪个状态后端 | 项目自己 |
-| research-max 按任务路由 | 什么任务读哪个 SKILL.md，用到哪一步为止，哪些动作不自动授权 | 本仓库各技能 |
-| 逐轮汇报 | 每轮交付怎么讲：判断、证据、边界、强度、缩写 | turn-report 的 T1—T7 |
-| 投入与止损 | 多轮任务怎么开工、卡住几次停手、何时收缩或重写、汇报带哪些成本账 | effort-guard 的 E1—E9 |
-| 图件生产 | 结果图与误差图怎么选型、怎么画、怎么导出与自检 | figure-craft 的 FIG1—FIG11 |
+| 项目入口与规则分工 | 读哪几个文件；任务状态唯一入口；代码、文献、案例、归档的位置；沿用哪个状态后端 | 项目自己 |
+| research-max 按任务路由 | 什么任务读哪个 SKILL.md，哪些动作不自动授权 | 本仓库各技能 |
+| 逐轮汇报 | 每轮交付怎么讲：判断、证据、边界、强度、缩写 | turn-report |
+| 投入与止损 | 怎么开工、卡住几次停手、何时收缩或重写、成本账 | effort-guard |
 | 独立判断与研究讨论 | 不附和、先机制后创新、近邻命中的处置、范围交代 | research-topic |
-| 研究与验收 | 基线、对照、真值与仿真分离、工程自检与科学 Gate 分级 | research-execution |
-| 渐进推进、记录与规范维护 | AGENTS、PLAN、TASKS 的分工；证据绑定；目录维护 | research-execution |
+| 研究与验收 | 基线与对照、真值与仿真分离、工程自检与科学 Gate 分级 | research-execution |
+| 渐进推进、记录与规范维护 | AGENTS、PLAN、TASKS 分工；证据绑定；目录维护 | research-execution |
 | 项目硬边界 | 数据落盘、凭据与隐私、外部动作授权、被测系统与评价器分离 | 项目自己 |
 
-替换占位符、删减路由行、填写项目可配置值的做法与反例见 [project-agents/README.md](project-agents/README.md)。仓库根的 `AGENTS.md` 是 research-max 自身的维护约定，不适用于你的项目。
+图件、写作与报告的细则不进常驻文件，在路由表中指向 figure-craft、paper-writing、report-writing。占位符替换、路由删减与可配置值的填写见 [project-agents/README.md](project-agents/README.md)。
 
 ## 总则：规则三层
 
-1. **科学不可妥协项**：不编造数据、引用、执行、模型身份或评审；结论与证据匹配；负结果可追溯；分母、单位与独立样本量明确；测试信息不进入开发；对照公平；数学与测量假设准确；哈希一致≠内容正确，编译通过≠公式正确。细化条文分布在各技能的"贯穿红线"节，逐项执行以技能原文为准。
-2. **用户协作偏好**：领域同行视角、具体自然表达、证据驱动修订；个人化样式条目的记录方式见 paper-writing 偏好表示例，具体项目值写入项目 `submission_profile.json`。
-3. **项目可配置项**：十个配置域（研究对象外推、模型与执行团队、费用与重复、引用与字数、字体版式、图件载体、PDF 生成链、引文位置、中西文间距、图中文字）由当前项目决定，未知填 null，不继承任何来源项目取值；判据表见 research-execution 协作与接续的"项目配置域"。
+1. **科学不可妥协项**：不编造数据、引用、执行、模型身份或评审；结论与证据匹配；负结果可追溯；分母、单位与独立样本量明确；测试信息不进入开发；对照公平；数学与测量假设准确；哈希一致不等于内容正确，编译通过不等于公式正确。细化条文在各技能“贯穿红线”节。
+2. **用户协作偏好**：领域同行视角、具体自然表达、证据驱动修订；个人化样式的记录方式见 paper-writing 的偏好表示例，具体项目值写入项目 `submission_profile.json`。
+3. **项目可配置项**：十个配置域（研究对象外推、模型与执行团队、费用与重复、引用与字数、字体版式、图件载体、PDF 生成链、引文位置、中西文间距、图中文字）由当前项目决定，未知填 null，不继承任何来源项目取值；判据表见 research-execution 协作与接续的“项目配置域”。
 
-## 迁移说明
+## 可选执行组件（仅在用户指定具体任务时启用）
 
-本集合于 2026-11-01 由一个中文科研方法库的 v1.8 工作区技能化迁移而来（精读编号 R1—R9 改为 P1—P9 以消除撞号；W/M/F/A、R1—R5、G0—G9 不变）。迁移时的分叉调和、共享物归属裁决与逐轮来源边界的提炼版全部收录在本仓库内（见 SOURCES.md），仓库的使用与维护不需要原方法库。
+| 组件 | 一句话 | 规则 | 命令与恢复 |
+|---|---|---|---|
+| 跨 Harness 执行 | 主持会话把指定模块派给另一 Harness 执行，返回后审核 | [跨Harness任务执行](research-execution/references/跨Harness任务执行.md) | [Claude Code 桥接](integrations/claude-code/README.md) |
+| GitHub 过程记录 | 用一个总览 Issue 与模块 PR 展示推进，任务状态仍只在 Markdown | [GitHub模块记录](research-execution/references/GitHub模块记录.md) | [GitHub 记录组件](integrations/github/README.md) |
 
-## 按任务选用的跨 Harness 执行
-
-用户讨论完方案后，可以指定整个实验、阶段或几个模块，由当前Codex主持并让Claude Code执行，模块返回后再审核。任务长、打开项目、存在TASKS或历史上使用过均不自动启动；授权范围内正常修回与推进不逐项确认。
-
-方法与启用边界见[跨Harness任务执行](research-execution/references/跨Harness任务执行.md)，空白片段见[交接模板](research-execution/templates/跨Harness交接.md)，可选运行入口见[Claude Code桥接](integrations/claude-code/README.md)。现有离线任务工具保持不调用模型；桥接的真实run会使用已配置账户的模型额度。
-
-## 按任务选用的GitHub过程记录
-
-用户明确指定任务采用GitHub记录并开始执行后，用一个总览Issue和模块PR展示推进，复用现有Codex审核，通过后自动合并并汇报。几个紧密关联任务可共享PR，任务状态仍只在Markdown维护；未启用项目不增加字段或外部操作。方法与分组边界见[GitHub模块记录](research-execution/references/GitHub模块记录.md)，填写入口见[空白接入模板](research-execution/templates/GitHub记录接入.md)，工具命令与恢复见[GitHub记录组件](integrations/github/README.md)。这项能力独立于Claude Code桥接；本库不自动创建真实实验仓库。
+两者相互独立；离线任务工具不调用模型，桥接的真实 run 会使用已配置账户的模型额度。Zotero 中文对照组件已独立为公开项目 [transfer-plus](https://github.com/let778750-cpu/transfer-plus)。

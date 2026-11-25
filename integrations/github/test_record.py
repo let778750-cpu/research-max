@@ -334,6 +334,14 @@ class RecorderTests(unittest.TestCase):
         self.assertEqual(self.gh.pr_data[0]["state"], "MERGED")
         self.assertIn(self.gh.pr_data[0]["url"], self.gh.pr_data[1]["body"])
 
+    def test_branch_prefix_is_configurable_and_validated(self):
+        self.recorder().connect([])
+        with self.assertRaises(ValueError):
+            self.recorder().start("M-001", 1, [], branch_prefix="bad prefix")
+        self.recorder().start("M-001", 1, [], branch_prefix="lab")
+        self.assertEqual(self.git.current(), "lab/m-001-r1")
+        self.assertEqual(self.recorder().state("M-001", 1)["branch"], "lab/m-001-r1")
+
     def test_status_while_paused_is_read_only(self):
         self.started()
         self.edit("- 发布：允许", "- 发布：暂停")

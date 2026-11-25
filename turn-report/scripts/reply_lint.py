@@ -2,7 +2,7 @@
 """reply_lint.py — 逐轮汇报机械自检（只检测不改写）。
 
 规则权威在本技能 references/：
-    过度防御表述诊断与改写.md（D1—D8、校准五档、A/B/C/P 分级）
+    过度防御表述诊断与改写.md（TD1—TD8、校准五档、A/B/C/P 分级）
     结论优先汇报结构.md（四段骨架、篇幅参考）
     缩写与术语首现规范.md（T7、白名单、待核标记）
 
@@ -122,25 +122,11 @@ ANCHOR_PATTERNS = (
 )
 
 ACR_RE = re.compile(r"\b[A-Z][A-Z0-9]{1,7}\b")
-ID_LIKE_RE = re.compile(r"^(?:[A-Z]\d+|FIG\d+)$")  # 规则标号（G0、T1、E1、FIG4）不是缩写
+ID_LIKE_RE = re.compile(r"^[A-Z]{1,3}\d+$")  # 规则标号（G0、T1、TD3、FIG4）不是缩写
 BRACKET_RE = re.compile(r"[（(][^（()）\n]{2,160}[）)]")
 LATIN_WORD_RE = re.compile(r"[A-Za-z]{2,}")
 
-DEFAULT_ALLOW = frozenset(
-    {
-        # 计量单位
-        "MB", "GB", "TB", "KB", "MS", "KM", "KG", "WH", "KW", "MW", "HZ", "KHZ", "MHZ", "GHZ",
-        # 文件格式
-        "PDF", "DOCX", "XLSX", "PPTX", "PNG", "JPG", "JPEG", "GIF", "SVG", "CSV", "JSON", "JSONL",
-        "YAML", "YML", "TOML", "XML", "HTML", "HTTP", "HTTPS", "MD", "PY", "ZIP", "TXT",
-        # 通用标识与约定
-        "UTC", "GPS", "API", "GPU", "CPU", "URL", "URI", "ID", "OK", "OS", "IO", "SDK",
-        # 仓库常见文件名（是文件名，不是缩写，按 T7 的文件名例外免展开）
-        "AGENTS", "CLAUDE", "README", "SOURCES", "TASKS", "PLAN", "LICENSE", "CHANGELOG", "SKILL",
-        # 专名与标准编号
-        "WGS84", "WGS72", "J2000", "ISO", "IEC", "IEEE", "GB",  # GB 同时是吉字节，白名单只免展开
-    }
-)
+ALLOWLIST_PATH = Path(__file__).with_name("allowlist.txt")
 
 
 def cjk_count(text: str) -> int:
@@ -264,27 +250,27 @@ def lint_text(text: str, *, allow: set[str] | None = None, max_chars: int | None
     stats = {"cjk": main_cjk, "anchors": 0, "density_per_kcjk": 0.0, "chars": len(text)}
     checks: list[dict] = []
 
-    # R1 结论行
+    # TR1 结论行
     head = main_text[:200]
     opener = next((o for o in OPENERS if o in head), None)
     first_line = _first_sentence(main_text)
     if opener and not CONCL_RE.search(head):
         checks.append(
-            {"id": "R1", "name": "结论行", "level": "fail",
+            {"id": "TR1", "name": "结论行", "level": "fail",
              "message": f"开场是导览且前 200 字无判断句（命中：{opener}）", "hits": [opener]}
         )
     elif opener:
         checks.append(
-            {"id": "R1", "name": "结论行", "level": "warn",
+            {"id": "TR1", "name": "结论行", "level": "warn",
              "message": f"开场是导览，判断被推迟（命中：{opener}）", "hits": [opener]}
         )
     else:
         checks.append(
-            {"id": "R1", "name": "结论行", "level": "pass",
+            {"id": "TR1", "name": "结论行", "level": "pass",
              "message": f"首句直接进入内容：{first_line[:40]}", "hits": []}
         )
 
-    # R2 免责分布（只统计边界段外）
+    # TR2 免责分布（只统计边界段外）
     hedge_hits: list[str] = []
     for pat in HEDGE_PATTERNS:
         hedge_hits.extend(m.group(0) for m in pat.finditer(main_text))
@@ -292,27 +278,27 @@ def lint_text(text: str, *, allow: set[str] | None = None, max_chars: int | None
     hedge_total = len(hedge_hits)
     if hedge_total >= 5:
         checks.append(
-            {"id": "R2", "name": "免责分布", "level": "fail",
+            {"id": "TR2", "name": "免责分布", "level": "fail",
              "message": f"边界段外免责 {hedge_total} 处，应合并进边界段", "hits": hedge_hits}
         )
     elif hedge_total >= 3:
         checks.append(
-            {"id": "R2", "name": "免责分布", "level": "warn",
+            {"id": "TR2", "name": "免责分布", "level": "warn",
              "message": f"边界段外免责 {hedge_total} 处，建议合并", "hits": hedge_hits}
         )
     elif any(count >= 2 for count in hedge_counter.values()):
         repeated = [w for w, c in hedge_counter.items() if c >= 2]
         checks.append(
-            {"id": "R2", "name": "免责分布", "level": "warn",
+            {"id": "TR2", "name": "免责分布", "level": "warn",
              "message": f"同一免责重复出现：{'、'.join(repeated)}", "hits": repeated}
         )
     else:
         checks.append(
-            {"id": "R2", "name": "免责分布", "level": "pass",
+            {"id": "TR2", "name": "免责分布", "level": "pass",
              "message": f"边界段外免责 {hedge_total} 处", "hits": hedge_hits}
         )
 
-    # R3 空泛词
+    # TR3 空泛词
     vague_hits: list[str] = []
     for pat in VAGUE_PATTERNS:
         vague_hits.extend(m.group(0) for m in pat.finditer(main_text))
@@ -322,71 +308,71 @@ def lint_text(text: str, *, allow: set[str] | None = None, max_chars: int | None
         level, message = "warn", f"空泛抽象词 {len(vague_hits)} 处，建议替换"
     else:
         level, message = "pass", f"空泛抽象词 {len(vague_hits)} 处"
-    checks.append({"id": "R3", "name": "空泛词", "level": level, "message": message, "hits": vague_hits})
+    checks.append({"id": "TR3", "name": "空泛词", "level": level, "message": message, "hits": vague_hits})
 
-    # R4 模板残留
+    # TR4 模板残留
     template_hits: list[str] = []
     for pat in TEMPLATE_PATTERNS:
         template_hits.extend(m.group(0) for m in pat.finditer(main_text))
     unique_template = sorted(set(template_hits))
     if len(unique_template) >= 2:
         checks.append(
-            {"id": "R4", "name": "模板残留", "level": "fail",
+            {"id": "TR4", "name": "模板残留", "level": "fail",
              "message": f"模板化表达 {len(unique_template)} 种：{'、'.join(unique_template)}", "hits": unique_template}
         )
     elif unique_template:
         checks.append(
-            {"id": "R4", "name": "模板残留", "level": "warn",
+            {"id": "TR4", "name": "模板残留", "level": "warn",
              "message": f"模板化表达：{unique_template[0]}", "hits": unique_template}
         )
     else:
-        checks.append({"id": "R4", "name": "模板残留", "level": "pass", "message": "未命中", "hits": []})
+        checks.append({"id": "TR4", "name": "模板残留", "level": "pass", "message": "未命中", "hits": []})
 
-    # R5 锚点密度
+    # TR5 锚点密度
     anchors = sum(len(p.findall(main_text)) for p in ANCHOR_PATTERNS)
     density = anchors / (main_cjk / 1000) if main_cjk else 0.0
     stats["anchors"] = anchors
     stats["density_per_kcjk"] = round(density, 1)
     if main_cjk > 600 and density < 8:
         checks.append(
-            {"id": "R5", "name": "锚点密度", "level": "warn",
+            {"id": "TR5", "name": "锚点密度", "level": "warn",
              "message": f"每千字锚点 {density:.1f} 处（阈值 8），结论缺少可定位依据", "hits": []}
         )
     else:
         checks.append(
-            {"id": "R5", "name": "锚点密度", "level": "pass",
+            {"id": "TR5", "name": "锚点密度", "level": "pass",
              "message": f"每千字锚点 {density:.1f} 处，共 {anchors} 处", "hits": []}
         )
 
-    # R6 结尾软化
+    # TR6 结尾软化
     tail = tail_text.strip()[-300:]
     soft_hits: list[str] = []
     for pat in SOFT_PATTERNS:
         soft_hits.extend(m.group(0) for m in pat.finditer(tail))
     if soft_hits:
         checks.append(
-            {"id": "R6", "name": "结尾软化", "level": "warn",
+            {"id": "TR6", "name": "结尾软化", "level": "warn",
              "message": f"结尾有软化表述：{'、'.join(sorted(set(soft_hits)))}", "hits": soft_hits}
         )
     else:
-        checks.append({"id": "R6", "name": "结尾软化", "level": "pass", "message": "未命中", "hits": []})
+        checks.append({"id": "TR6", "name": "结尾软化", "level": "pass", "message": "未命中", "hits": []})
 
-    # R7 缩写首现（行内代码与路径已排除）
+    # TR7 缩写首现（行内代码与路径已排除）
     undefined = find_undefined_acronyms(main_nocode, allow_set)
     if len(undefined) >= 3:
         checks.append(
-            {"id": "R7", "name": "缩写首现", "level": "fail",
+            {"id": "TR7", "name": "缩写首现", "level": "fail",
              "message": f"{len(undefined)} 个缩写首现无全称：{'、'.join(t for t, _ in undefined)}",
              "hits": [t for t, _ in undefined]}
         )
     elif undefined:
         checks.append(
-            {"id": "R7", "name": "缩写首现", "level": "warn",
+            {"id": "TR7", "name": "缩写首现", "level": "warn",
              "message": f"缩写首现无全称：{'、'.join(t for t, _ in undefined)}",
              "hits": [t for t, _ in undefined]}
         )
     else:
-        checks.append({"id": "R7", "name": "缩写首现", "level": "pass", "message": "未命中", "hits": []})
+        checks.append({"id": "TR7", "name": "缩写首现", "level": "pass", "message": "未命中", "hits": []})
 
     # 可选的篇幅上限
     if max_chars is not None and main_cjk > max_chars:
@@ -407,14 +393,17 @@ def lint_text(text: str, *, allow: set[str] | None = None, max_chars: int | None
 
 
 def load_allow(path: Path) -> set[str]:
-    """从纯文本读白名单：一行一个缩写，# 开头为注释。"""
+    """从纯文本读白名单：空白分隔，可一行多个，# 开头为注释。"""
     allow: set[str] = set()
     for line in path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
-        allow.add(line)
+        allow.update(line.split())
     return allow
+
+
+DEFAULT_ALLOW = frozenset(load_allow(ALLOWLIST_PATH))
 
 
 def read_text(path: Path) -> str:

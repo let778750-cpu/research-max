@@ -23,6 +23,7 @@ import markdown_tasks as md
 META = ".research-github"
 ISSUE_MARKER = "<!-- research-max:overview:v1 -->"
 PR_MARKER = "<!-- research-max:module:"
+DEFAULT_BRANCH_PREFIX = "codex"  # 兼容已有登记；新项目可用 --branch-prefix 改
 RESERVED = {".git", META, ".research-harness", ".claude"}
 
 
@@ -486,7 +487,7 @@ class Recorder:
                 for item in task.get("outputs", []) + ([task["review"]] if task.get("review") else []):
                     self.committed_file(base_sha, item["path"])
 
-    def start(self, module_id, iteration, files):
+    def start(self, module_id, iteration, files, branch_prefix=DEFAULT_BRANCH_PREFIX):
         with self.mutation():
             self.repo_ready()
             module = self.module(module_id)
@@ -504,7 +505,8 @@ class Recorder:
                     raise ValueError("当前提交未进入基线；不把无关本地历史带入新模块")
                 if not any(self.by_id[t]["status"] != "ACCEPTED" for t in module["tasks"]):
                     raise ValueError("模块已全部验收；先明确本轮修回要求或新增有范围的核查任务")
-                branch = f"codex/{module_id.lower()}-r{iteration}"
+                branch = f"{branch_prefix}/{module_id.lower()}-r{iteration}"
+                command(["git", "check-ref-format", "--branch", branch])
                 if self.git.run("show-ref", "--verify", "--quiet", "refs/heads/" + branch, check=False).returncode == 0 or self.git.exists_remote(branch):
                     raise ValueError("目标分支已存在但无本地登记；须核对，不能占用他人分支")
                 earlier = sorted(path.parent.glob("r*.json"), key=lambda p: int(p.stem[1:]))
@@ -733,6 +735,9 @@ def main():
         if name not in {"connect"}:
             p.add_argument("--module", required=name != "status", dest="module_id")
             p.add_argument("--iteration", type=int, default=1)
+        if name == "start":
+            p.add_argument("--branch-prefix", default=DEFAULT_BRANCH_PREFIX,
+                           help="模块分支前缀，分支名为 <前缀>/<模块小写>-r<轮次>；默认沿用既有记录")
         if name in {"connect", "start", "publish"}:
             p.add_argument("--file", action="append", default=[], dest="files")
         if name == "connect":

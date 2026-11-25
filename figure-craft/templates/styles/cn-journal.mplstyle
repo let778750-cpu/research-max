@@ -1,0 +1,35 @@
+# 中文核心期刊（通用起点）（cn-journal）。由 scripts/figstyle.py --write-styles 从
+# templates/journal_profiles.json 生成，勿手改；栏宽与图高用 figstyle.figure_size。
+# 字体列表含未安装项时 matplotlib 会告警并跳过；中文字体在西文之后，逐字形回退。
+font.family: Times New Roman, STIXGeneral, SimSun, STSong, Noto Serif SC, NSimSun
+font.size: 7.5
+axes.labelsize: 7.5
+axes.titlesize: 7.5
+xtick.labelsize: 7.5
+ytick.labelsize: 7.5
+legend.fontsize: 7.5
+mathtext.fontset: stix
+axes.unicode_minus: True
+pdf.fonttype: 42
+ps.fonttype: 42
+svg.fonttype: none
+figure.constrained_layout.use: True
+savefig.bbox: standard
+savefig.dpi: 600
+figure.dpi: 100
+lines.linewidth: 1.0
+axes.linewidth: 0.6
+xtick.major.width: 0.6
+ytick.major.width: 0.6
+xtick.minor.width: 0.5
+ytick.minor.width: 0.5
+grid.linewidth: 0.5
+patch.linewidth: 0.6
+axes.spines.top: False
+axes.spines.right: False
+xtick.direction: out
+ytick.direction: out
+legend.frameon: False
+axes.grid: False
+image.cmap: viridis
+axes.prop_cycle: cycler('color', ['0072B2', 'D55E00', '009E73', 'CC79A7', 'E69F00', '56B4E9', '000000', 'F0E442'])

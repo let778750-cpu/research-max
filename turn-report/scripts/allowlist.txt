@@ -1,0 +1,12 @@
+# reply_lint 默认缩写白名单：一行可写多个，空白分隔；# 开头为注释。
+# 这里只放"免展开"的通用项；项目专有缩写用 --allow 追加，不改本文件。
+# 计量单位
+MB GB TB KB MS KM KG WH KW MW HZ KHZ MHZ GHZ
+# 文件格式
+PDF DOCX XLSX PPTX PNG JPG JPEG GIF SVG EPS TIFF CSV JSON JSONL YAML YML TOML XML HTML HTTP HTTPS MD PY ZIP TXT
+# 通用标识与约定
+UTC GPS API GPU CPU URL URI ID OK OS IO SDK DOI
+# 仓库常见文件名（是文件名，不是缩写）
+AGENTS CLAUDE GEMINI README SOURCES TASKS PLAN LICENSE CHANGELOG SKILL
+# 国际标准与专名编号（GB 同时是吉字节，白名单只免展开）
+WGS84 WGS72 J2000 ISO IEC IEEE GB
