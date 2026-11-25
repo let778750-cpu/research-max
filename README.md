@@ -34,7 +34,7 @@
 | 投入与止损 | 怎么开工、卡住几次停手、何时收缩或重写、成本账 | effort-guard |
 | 独立判断与研究讨论 | 不附和、先机制后创新、近邻命中的处置、范围交代 | research-topic |
 | 研究与验收 | 基线与对照、真值与仿真分离、工程自检与科学 Gate 分级 | research-execution |
-| 渐进推进、记录与规范维护 | AGENTS、PLAN、TASKS 分工；证据绑定；目录维护 | research-execution |
+| 渐进推进、记录与规范维护 | AGENTS、方案（总体计划）、TASKS 分工；证据绑定；目录维护 | research-execution |
 | 项目硬边界 | 数据落盘、凭据与隐私、外部动作授权、被测系统与评价器分离 | 项目自己 |
 
 图件、写作与报告的细则不进常驻文件，在路由表中指向 figure-craft、paper-writing、report-writing。占位符替换、路由删减与可配置值的填写见 [project-agents/README.md](project-agents/README.md)。

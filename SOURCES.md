@@ -65,6 +65,8 @@
 
 **执行中计划调整与验收依据（2026-11-06）**：用户进一步要求计划调整能落实到任务，而非重新生成整套状态账。核对上述 ExecPlans 的动态更新与决策记录做法后，将本库既有“同步下游”细化为按影响更新、稳定ID、拆分承接和局部重验。计划修订标识文档同步，任务要求摘要绑定局部目标、声明的关键输入、依赖、复核方式和验收条件；不把整份计划哈希绑定到所有任务。反例：只改计划未改任务、产物未变但标准已改仍沿用旧回执、重编ID切断证据、把暂缓或替代计为完成。继承旧JSON/无版本Markdown的兼容边界，但显式提示未核验的修订或要求绑定，不自动迁移。机械摘要不认证语义适用性、隐含依赖或实际复核；来源未验证本方案效果。实施以计划错位、旧回执失配、进度无关变更、承接缺失/环与隔离接续演练验证，不外推科研收益。
 
+**设计源与任务源二分（2026-11-25）**：用户质疑项目约定的“方案、PLAN、TASKS”三件是否冗余、方案拆成任务后是否还需保留，参照对象为 EvoMeta Infra 的 task.json。核查：EvoMeta 本地快照在任务表之外另有题目、界面参考材料与长篇 README 作需求说明；[Anthropic 长程代理实践](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) 的特性清单由输入规格展开，规格本身不被替代；[GitHub spec-kit](https://github.com/github/spec-kit/blob/main/spec-driven.md) 分 spec、plan、tasks 三层，任务由计划派生、规格是持续维护的真相源；[Kiro 规格](https://kiro.dev/docs/specs/) 为 requirements、design、tasks 三件，tasks.md 即实施计划并按依赖分波执行，任务回链需求编号；[Nygard 架构决策记录（2011）](https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions) 指出决策动机最难追踪，缺少理由只能盲从或盲改；SPIRIT 2013 要求方案修订注明日期，方案作为原始意图记录可与最终报告对照以发现选择性报告（[Chan 等，Ann Intern Med 2013](https://europepmc.org/backend/ptpmcrender.fcgi?accid=PMC5114123&blobtype=pdf)）。反面：[Böckeler 对 Kiro、spec-kit、Tessl 的评测](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) 指出多份 Markdown 相互重复、审阅负担重、小问题套大流程。采纳：总体计划（方案）为唯一设计源，TASKS 为唯一状态源并以依赖表达先后，不另建只列步骤的第三份计划，README 只导航。边界：两份是默认不是下限，小任务可合为一份；不采用 passes 布尔值（理由见 2026-11-05 条）；上述来源多为软件开发经验，未证明能提高科研正确率。
+
 ### 用户指定任务的跨 Harness 执行（2026-11-07）
 
 用户明确选择：科学讨论与方案制定保持正常对话；仅由用户指定的具体任务使用当前Codex主持、Claude Code执行、模块返回后审核的方式。授权范围内连续推进，其他窗口、旧项目及普通任务不自动启用。Markdown仍是任务状态权威；进程事件、派发摘要和回执是尝试证据，不另建任务数据库。
