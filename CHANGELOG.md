@@ -10,6 +10,7 @@
 - 跨 Harness 与 GitHub 记录说明各收敛为一份权威 reference；删除 `research-execution/templates/现有项目跨Harness接入.md`。
 - 项目与宿主相关例句中性化；领域例子集中到 `examples/领域示例.md`；`integrations/github/record.py` 分支前缀改为可配置。
 - 文献入库联动：research-topic D1 增"项目登记本地文献库时先入库、版本关联、强转换器与回查原件"段；project-agents 模板项目硬边界增"文献库"条（适用所有 Harness 与子代理）；SOURCES 登记依据。
+- 深读八问与断点暂停：research-topic P2 增深读八问（P9 加对应检查项），精读模板第6、7节升为核心节并补大问题、先记后释、外部评价；D8 改为与用户协同的分析停在断点、补入后入库转换再接续；SKILL 与 project-agents 模板同步。
 - figure-craft 补强（进行中，已暂停；续做入口 `figure-craft/绘图补强计划.md`）：已新增期刊版式预设 `journal_profiles.json`、生成的 mplstyle、12 个可运行配方与 figstyle / layout_audit / palette_audit 工具，重写 figure_lint 修复其对真实 matplotlib 导出的失效；TikZ 骨架、references 与 SKILL.md 的 FIG12—FIG14 尚未写入。
 
 ## 迁移说明（2026-11-01）
